@@ -6,7 +6,6 @@ import 'package:oneplace_illinois/src/providers/connection_status_provider.dart'
 import 'package:oneplace_illinois/src/screens/addItemTab.dart';
 import 'package:oneplace_illinois/src/screens/feedTab.dart';
 import 'package:oneplace_illinois/src/screens/libraryTab.dart';
-import 'package:oneplace_illinois/src/screens/splashScreen.dart';
 import 'package:oneplace_illinois/src/views/sliverView.dart';
 import 'package:provider/provider.dart';
 
@@ -53,7 +52,9 @@ class _OnePlaceState extends State<OnePlace> {
               DefaultCupertinoLocalizations.delegate,
             ],
             title: "One Place",
-            home: SplashScreen(),
+            // Had to remove the SplashScreen widget for the time being, causing errors with testing due to the Connectivity class, will look into it later.
+            // Might be better to just scrap the Connection test thing instead and just keep it for checking if a User is logged in or not.
+            home: OnePlaceTabs(),
             material: (_, __) => MaterialAppData(
               theme: materialTheme,
             ),

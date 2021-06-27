@@ -2,7 +2,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
 
 /*
-Connection Status Provider, allows us to know if the device is connected to the device or not.
+Connection Status Provider, allows us to know if the device is connected to the internet or not.
 */
 
 class ConnectionStatusProvider with ChangeNotifier {
