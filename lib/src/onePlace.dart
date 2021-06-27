@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/providers/connection_status_provider.dart';
 import 'package:oneplace_illinois/src/screens/addItemTab.dart';
 import 'package:oneplace_illinois/src/screens/feedTab.dart';
 import 'package:oneplace_illinois/src/screens/libraryTab.dart';
 import 'package:oneplace_illinois/src/screens/splashScreen.dart';
+import 'package:oneplace_illinois/src/views/sliverView.dart';
 import 'package:provider/provider.dart';
 
 /*
@@ -21,21 +24,47 @@ class OnePlace extends StatefulWidget {
 class _OnePlaceState extends State<OnePlace> {
   @override
   Widget build(BuildContext context) {
+    final materialTheme = ThemeData(
+      cupertinoOverrideTheme: CupertinoThemeData(
+        brightness: Brightness.light,
+        primaryColor: CupertinoColors.white,
+      ),
+      brightness: Brightness.light,
+      primaryColor: Colors.white,
+    );
+
     // Future proofing; If we ever need to access a class or object that is not a part of the current class or screen, we can by initializing a provider here.
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<ConnectionStatusProvider>(
           create: (context) => ConnectionStatusProvider(),
-        )
-      ],
-      child: CupertinoApp(
-        debugShowCheckedModeBanner: false,
-        title: "One Place",
-        theme: CupertinoThemeData(
-          brightness: Brightness.dark,
-          primaryColor: CupertinoColors.white,
         ),
-        home: SplashScreen(),
+      ],
+      //  This is for multiplatform, it will load the themes based on the platform that is being used, in order to make the app feel natural to the user.
+      child: Theme(
+        data: materialTheme,
+        child: PlatformProvider(
+          settings: PlatformSettingsData(iosUsesMaterialWidgets: true),
+          builder: (context) => PlatformApp(
+            debugShowCheckedModeBanner: false,
+            localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+              DefaultMaterialLocalizations.delegate,
+              DefaultWidgetsLocalizations.delegate,
+              DefaultCupertinoLocalizations.delegate,
+            ],
+            title: "One Place",
+            home: SplashScreen(),
+            material: (_, __) => MaterialAppData(
+              theme: materialTheme,
+            ),
+            cupertino: (_, __) => CupertinoAppData(
+              theme: CupertinoThemeData(
+                brightness: Brightness.dark,
+                primaryColor: CupertinoColors.white,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -54,58 +83,68 @@ class _OnePlaceTabs extends State<OnePlaceTabs> {
   final GlobalKey<NavigatorState> libraryTabKey = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> feedTabKey = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> addItemTabKey = GlobalKey<NavigatorState>();
-
+  late Widget Function(BuildContext, int) contentBuilder;
+  late PlatformTabController tabController;
+  final List<BottomNavigationBarItem> Function(BuildContext)
+      navigationBarItems = (BuildContext context) => [
+            BottomNavigationBarItem(
+              icon: Icon(PlatformIcons(context).book),
+              label: "Library",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(PlatformIcons(context).home),
+              label: "Feed",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(PlatformIcons(context).addCircledOutline),
+              label: "New Item",
+            ),
+          ];
   @override
   void initState() {
     super.initState();
+    final List<String> titles = ["Library", "Feed", "New Item"];
+    final List<Widget> widgets = [
+      LibraryTab(
+        key: libraryTabKey,
+      ),
+      FeedTab(
+        key: feedTabKey,
+      ),
+      AddItemTab(
+        key: addItemTabKey,
+      )
+    ];
+
+    tabController = PlatformTabController(
+      initialIndex: 1,
+    );
+
+    contentBuilder = (BuildContext context, int index) => SliverView(
+          title: titles[index],
+          children: [widgets[index]],
+          titleStyle: TextStyle(color: Colors.white),
+        );
   }
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoTabScaffold(
-      tabBuilder: (BuildContext context, int i) {
-        switch (i) {
-          case 0:
-            return CupertinoTabView(
-              navigatorKey: libraryTabKey,
-              builder: (context) => LibraryTab(),
-            );
-          case 1:
-            return CupertinoTabView(
-              navigatorKey: feedTabKey,
-              builder: (context) => FeedTab(),
-            );
-          case 2:
-            return CupertinoTabView(
-              navigatorKey: addItemTabKey,
-              builder: (context) => AddItemTab(),
-            );
-          default:
-            return CupertinoTabView(
-              navigatorKey: feedTabKey,
-              builder: (context) => FeedTab(),
-            );
-        }
-      },
-      tabBar: CupertinoTabBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.book),
-            label: "Library",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.home),
-            label: "Feed",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.add_circled),
-            label: "New Item",
-          ),
-        ],
+    // multiplatform themes
+    return PlatformTabScaffold(
+      iosContentPadding: true,
+      tabController: tabController,
+      bodyBuilder: contentBuilder,
+      items: navigationBarItems(context),
+      pageBackgroundColor: Colors.white,
+      cupertinoTabs: (context, platform) => CupertinoTabBarData(
         activeColor: CupertinoColors.white,
-        currentIndex: 1,
-        backgroundColor: CupertinoColors.black,
+        inactiveColor: CupertinoColors.extraLightBackgroundGray,
+        backgroundColor: AppColors.secondaryUofIDark,
       ),
+      materialTabs: (context, platform) => MaterialNavBarData(
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.grey[400],
+          backgroundColor: AppColors.secondaryUofIDark),
     );
   }
 }

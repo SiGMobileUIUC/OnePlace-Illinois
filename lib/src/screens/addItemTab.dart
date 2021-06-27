@@ -14,7 +14,7 @@ class AddItemTab extends StatefulWidget {
 class _AddItemTabState extends State<AddItemTab> {
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
+    /* return CupertinoPageScaffold(
       backgroundColor: CupertinoColors.black,
       child: CustomScrollView(
         slivers: [
@@ -36,6 +36,7 @@ class _AddItemTabState extends State<AddItemTab> {
           ),
         ],
       ),
-    );
+    ); */
+    return Text("Base");
   }
 }

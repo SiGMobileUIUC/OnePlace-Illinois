@@ -14,7 +14,7 @@ class FeedTab extends StatefulWidget {
 class _FeedTabState extends State<FeedTab> {
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
+    /* return CupertinoPageScaffold(
       backgroundColor: CupertinoColors.black,
       child: CustomScrollView(
         slivers: [
@@ -36,6 +36,7 @@ class _FeedTabState extends State<FeedTab> {
           ),
         ],
       ),
-    );
+    ); */
+    return Text("Base");
   }
 }

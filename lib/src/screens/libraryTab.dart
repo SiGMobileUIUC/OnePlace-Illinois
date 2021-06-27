@@ -14,7 +14,7 @@ class LibraryTab extends StatefulWidget {
 class _LibraryTabState extends State<LibraryTab> {
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
+    /* return CupertinoPageScaffold(
       backgroundColor: CupertinoColors.black,
       child: CustomScrollView(
         slivers: [
@@ -36,6 +36,7 @@ class _LibraryTabState extends State<LibraryTab> {
           ),
         ],
       ),
-    );
+    ); */
+    return Text("Base");
   }
 }
