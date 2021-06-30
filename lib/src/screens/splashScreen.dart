@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:oneplace_illinois/src/onePlace.dart';
-import 'package:oneplace_illinois/src/providers/connection_status_provider.dart';
+import 'package:oneplace_illinois/src/screens/authenticate.dart';
 import 'package:provider/provider.dart';
-
 /*
 Loading screen while app checks user data and connects to the internet.
 */
@@ -14,37 +13,25 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashState extends State<SplashScreen> {
+  bool register = false;
+
   @override
   void initState() {
     super.initState();
   }
 
-  @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
-
-    // Will check if user is logged in or not here.
-
-    final connection = Provider.of<ConnectionStatusProvider>(context);
-    await connection.checkConnectivity();
-    if (connection.isConnected) {
-      Navigator.of(context).pushReplacement(
-        CupertinoPageRoute(
-          builder: (BuildContext context) => OnePlaceTabs(),
-        ),
-      );
-    }
+  void toggleScreen() {
+    setState(() {
+      register = !register;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      backgroundColor: CupertinoColors.black,
-      child: Center(
-        child: SpinKitThreeBounce(
-          color: CupertinoColors.white,
-        ),
-      ),
-    );
+    final User? user = Provider.of<User?>(context);
+
+    return user != null
+        ? OnePlaceTabs()
+        : Authenticate(register: register, toggleScreen: toggleScreen);
   }
 }

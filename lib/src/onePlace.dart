@@ -1,12 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
-import 'package:oneplace_illinois/src/providers/connection_status_provider.dart';
-import 'package:oneplace_illinois/src/screens/addItemTab.dart';
-import 'package:oneplace_illinois/src/screens/feedTab.dart';
-import 'package:oneplace_illinois/src/screens/libraryTab.dart';
-import 'package:oneplace_illinois/src/views/sliverView.dart';
+import 'package:oneplace_illinois/src/providers/connectionStatus.dart';
+import 'package:oneplace_illinois/src/screens/home/addItemTab.dart';
+import 'package:oneplace_illinois/src/screens/home/feedTab.dart';
+import 'package:oneplace_illinois/src/screens/home/libraryTab.dart';
+import 'package:oneplace_illinois/src/screens/splashScreen.dart';
+import 'package:oneplace_illinois/src/services/firebaseAuth.dart';
+import 'package:oneplace_illinois/src/widgets/sliverView.dart';
 import 'package:provider/provider.dart';
 
 /*
@@ -40,28 +43,32 @@ class _OnePlaceState extends State<OnePlace> {
         ),
       ],
       //  This is for multiplatform, it will load the themes based on the platform that is being used, in order to make the app feel natural to the user.
-      child: Theme(
-        data: materialTheme,
-        child: PlatformProvider(
-          settings: PlatformSettingsData(iosUsesMaterialWidgets: true),
-          builder: (context) => PlatformApp(
-            debugShowCheckedModeBanner: false,
-            localizationsDelegates: <LocalizationsDelegate<dynamic>>[
-              DefaultMaterialLocalizations.delegate,
-              DefaultWidgetsLocalizations.delegate,
-              DefaultCupertinoLocalizations.delegate,
-            ],
-            title: "One Place",
-            // Had to remove the SplashScreen widget for the time being, causing errors with testing due to the Connectivity class, will look into it later.
-            // Might be better to just scrap the Connection test thing instead and just keep it for checking if a User is logged in or not.
-            home: OnePlaceTabs(),
-            material: (_, __) => MaterialAppData(
-              theme: materialTheme,
-            ),
-            cupertino: (_, __) => CupertinoAppData(
-              theme: CupertinoThemeData(
-                brightness: Brightness.dark,
-                primaryColor: CupertinoColors.white,
+      child: StreamProvider<User?>.value(
+        value: FirebaseAuthService().userStream,
+        initialData: FirebaseAuthService().user,
+        child: Theme(
+          data: materialTheme,
+          child: PlatformProvider(
+            settings: PlatformSettingsData(iosUsesMaterialWidgets: true),
+            builder: (context) => PlatformApp(
+              debugShowCheckedModeBanner: false,
+              localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+                DefaultMaterialLocalizations.delegate,
+                DefaultWidgetsLocalizations.delegate,
+                DefaultCupertinoLocalizations.delegate,
+              ],
+              title: "One Place",
+              // Had to remove the SplashScreen widget for the time being, causing errors with testing due to the Connectivity class, will look into it later.
+              // Might be better to just scrap the Connection test thing instead and just keep it for checking if a User is logged in or not.
+              home: SplashScreen(),
+              material: (_, __) => MaterialAppData(
+                theme: materialTheme,
+              ),
+              cupertino: (_, __) => CupertinoAppData(
+                theme: CupertinoThemeData(
+                  brightness: Brightness.dark,
+                  primaryColor: CupertinoColors.white,
+                ),
               ),
             ),
           ),

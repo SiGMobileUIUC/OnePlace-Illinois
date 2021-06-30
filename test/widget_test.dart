@@ -9,7 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:oneplace_illinois/src/onePlace.dart';
-import 'package:oneplace_illinois/src/views/sliverView.dart';
+import 'package:oneplace_illinois/src/widgets/sliverView.dart';
 
 void main() {
   /*
@@ -17,6 +17,7 @@ void main() {
     Given some context, When some action is carried out, Then a set of observable consequences take place.
   */
 
+  // Check if icons in tabs are showing correct page.
   testWidgets(
       "Given user in current tab When other tab bar item is pressed Then a new tab is opened.",
       (WidgetTester tester) async {
@@ -26,7 +27,9 @@ void main() {
 
     await tester.pumpWidget(Builder(builder: (context) {
       platformIcons = PlatformIcons(context);
-      return OnePlace();
+      return PlatformApp(
+        home: OnePlaceTabs(),
+      );
     }));
 
     final libraryTab = find.byIcon(platformIcons.book);

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.oneplace_illinois">
+    package="oneplace.sigmobile.acm.illinois.edu">
    <application
         android:label="oneplace_illinois"
         android:icon="@mipmap/ic_launcher">
