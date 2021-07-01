@@ -7,6 +7,7 @@ import 'package:oneplace_illinois/src/providers/connectionStatus.dart';
 import 'package:oneplace_illinois/src/screens/home/addItemTab.dart';
 import 'package:oneplace_illinois/src/screens/home/feedTab.dart';
 import 'package:oneplace_illinois/src/screens/home/libraryTab.dart';
+import 'package:oneplace_illinois/src/screens/home/settingsTab.dart';
 import 'package:oneplace_illinois/src/screens/splashScreen.dart';
 import 'package:oneplace_illinois/src/services/firebaseAuth.dart';
 import 'package:oneplace_illinois/src/widgets/sliverView.dart';
@@ -91,8 +92,15 @@ class _OnePlaceTabs extends State<OnePlaceTabs> {
   final GlobalKey<NavigatorState> libraryTabKey = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> feedTabKey = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> addItemTabKey = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> settingsTabKey = GlobalKey<NavigatorState>();
   late Widget Function(BuildContext, int) contentBuilder;
   late PlatformTabController tabController;
+  final List<String> titles = [
+    "Library",
+    "Feed",
+    "New Item",
+    "Settings",
+  ];
   final List<BottomNavigationBarItem> Function(BuildContext)
       navigationBarItems = (BuildContext context) => [
             BottomNavigationBarItem(
@@ -107,11 +115,14 @@ class _OnePlaceTabs extends State<OnePlaceTabs> {
               icon: Icon(PlatformIcons(context).addCircledOutline),
               label: "New Item",
             ),
+            BottomNavigationBarItem(
+              icon: Icon(PlatformIcons(context).settings),
+              label: "Settings",
+            ),
           ];
   @override
   void initState() {
     super.initState();
-    final List<String> titles = ["Library", "Feed", "New Item"];
     final List<Widget> widgets = [
       LibraryTab(
         key: libraryTabKey,
@@ -121,7 +132,10 @@ class _OnePlaceTabs extends State<OnePlaceTabs> {
       ),
       AddItemTab(
         key: addItemTabKey,
-      )
+      ),
+      SettingsTab(
+        key: settingsTabKey,
+      ),
     ];
 
     tabController = PlatformTabController(
@@ -150,6 +164,7 @@ class _OnePlaceTabs extends State<OnePlaceTabs> {
         backgroundColor: AppColors.secondaryUofIDark,
       ),
       materialTabs: (context, platform) => MaterialNavBarData(
+          type: BottomNavigationBarType.fixed,
           selectedItemColor: Colors.white,
           unselectedItemColor: Colors.grey[400],
           backgroundColor: AppColors.secondaryUofIDark),
