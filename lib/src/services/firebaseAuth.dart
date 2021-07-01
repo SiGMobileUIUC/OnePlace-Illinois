@@ -32,7 +32,7 @@ class FirebaseAuthService {
   }
 
   // Sign out method for Firebase
-  Future<void> signOut(String email, String password) async {
+  Future<void> signOut() async {
     await _firebaseAuth.signOut();
   }
 
