@@ -24,7 +24,7 @@ jobs:
 
   build_ios:
     name: Build Flutter app (iOS)
-    needs: [flutter-test]
+    needs: [flutter_tests]
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
@@ -41,7 +41,7 @@ jobs:
 
   build_appbundle:
     name: Build Flutter app (Android)
-    needs: [flutter-test]
+    needs: [flutter_tests]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
