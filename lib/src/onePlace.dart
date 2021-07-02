@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
-import 'package:oneplace_illinois/src/providers/connectionStatus.dart';
 import 'package:oneplace_illinois/src/screens/home/addItemTab.dart';
 import 'package:oneplace_illinois/src/screens/home/feedTab.dart';
 import 'package:oneplace_illinois/src/screens/home/libraryTab.dart';
@@ -37,43 +36,44 @@ class _OnePlaceState extends State<OnePlace> {
     );
 
     // Future proofing; If we ever need to access a class or object that is not a part of the current class or screen, we can by initializing a provider here.
-    return MultiProvider(
+    /* return MultiProvider(
       providers: [
         ChangeNotifierProvider<ConnectionStatusProvider>(
           create: (context) => ConnectionStatusProvider(),
         ),
       ],
+      child: */
+    return Theme(
+      data: materialTheme,
       //  This is for multiplatform, it will load the themes based on the platform that is being used, in order to make the app feel natural to the user.
-      child: StreamProvider<User?>.value(
-        value: FirebaseAuthService().userStream,
-        initialData: FirebaseAuthService().user,
-        child: Theme(
-          data: materialTheme,
-          child: PlatformProvider(
-            settings: PlatformSettingsData(iosUsesMaterialWidgets: true),
-            builder: (context) => PlatformApp(
-              debugShowCheckedModeBanner: false,
-              localizationsDelegates: <LocalizationsDelegate<dynamic>>[
-                DefaultMaterialLocalizations.delegate,
-                DefaultWidgetsLocalizations.delegate,
-                DefaultCupertinoLocalizations.delegate,
-              ],
-              title: "One Place",
-              home: SplashScreen(),
-              material: (_, __) => MaterialAppData(
-                theme: materialTheme,
-              ),
-              cupertino: (_, __) => CupertinoAppData(
-                theme: CupertinoThemeData(
-                  brightness: Brightness.dark,
-                  primaryColor: CupertinoColors.white,
-                ),
-              ),
+      child: PlatformProvider(
+        settings: PlatformSettingsData(iosUsesMaterialWidgets: true),
+        builder: (context) => PlatformApp(
+          debugShowCheckedModeBanner: false,
+          localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+            DefaultMaterialLocalizations.delegate,
+            DefaultWidgetsLocalizations.delegate,
+            DefaultCupertinoLocalizations.delegate,
+          ],
+          title: "One Place",
+          home: StreamProvider<User?>.value(
+            value: FirebaseAuthService().userStream,
+            initialData: FirebaseAuthService().user,
+            child: SplashScreen(),
+          ),
+          material: (_, __) => MaterialAppData(
+            theme: materialTheme,
+          ),
+          cupertino: (_, __) => CupertinoAppData(
+            theme: CupertinoThemeData(
+              brightness: Brightness.dark,
+              primaryColor: CupertinoColors.white,
             ),
           ),
         ),
       ),
     );
+    // );
   }
 }
 

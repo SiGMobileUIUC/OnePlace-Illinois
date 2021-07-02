@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oneplace_illinois/src/services/firebaseAuth.dart';
 import 'package:oneplace_illinois/src/widgets/boxItem.dart';
 
