@@ -3,10 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
-import 'package:oneplace_illinois/src/providers/connectionStatus.dart';
 import 'package:oneplace_illinois/src/screens/home/addItemTab.dart';
 import 'package:oneplace_illinois/src/screens/home/feedTab.dart';
 import 'package:oneplace_illinois/src/screens/home/libraryTab.dart';
+import 'package:oneplace_illinois/src/screens/home/settingsTab.dart';
 import 'package:oneplace_illinois/src/screens/splashScreen.dart';
 import 'package:oneplace_illinois/src/services/firebaseAuth.dart';
 import 'package:oneplace_illinois/src/widgets/sliverView.dart';
@@ -36,45 +36,44 @@ class _OnePlaceState extends State<OnePlace> {
     );
 
     // Future proofing; If we ever need to access a class or object that is not a part of the current class or screen, we can by initializing a provider here.
-    return MultiProvider(
+    /* return MultiProvider(
       providers: [
         ChangeNotifierProvider<ConnectionStatusProvider>(
           create: (context) => ConnectionStatusProvider(),
         ),
       ],
+      child: */
+    return Theme(
+      data: materialTheme,
       //  This is for multiplatform, it will load the themes based on the platform that is being used, in order to make the app feel natural to the user.
-      child: StreamProvider<User?>.value(
-        value: FirebaseAuthService().userStream,
-        initialData: FirebaseAuthService().user,
-        child: Theme(
-          data: materialTheme,
-          child: PlatformProvider(
-            settings: PlatformSettingsData(iosUsesMaterialWidgets: true),
-            builder: (context) => PlatformApp(
-              debugShowCheckedModeBanner: false,
-              localizationsDelegates: <LocalizationsDelegate<dynamic>>[
-                DefaultMaterialLocalizations.delegate,
-                DefaultWidgetsLocalizations.delegate,
-                DefaultCupertinoLocalizations.delegate,
-              ],
-              title: "One Place",
-              // Had to remove the SplashScreen widget for the time being, causing errors with testing due to the Connectivity class, will look into it later.
-              // Might be better to just scrap the Connection test thing instead and just keep it for checking if a User is logged in or not.
-              home: SplashScreen(),
-              material: (_, __) => MaterialAppData(
-                theme: materialTheme,
-              ),
-              cupertino: (_, __) => CupertinoAppData(
-                theme: CupertinoThemeData(
-                  brightness: Brightness.dark,
-                  primaryColor: CupertinoColors.white,
-                ),
-              ),
+      child: PlatformProvider(
+        settings: PlatformSettingsData(iosUsesMaterialWidgets: true),
+        builder: (context) => PlatformApp(
+          debugShowCheckedModeBanner: false,
+          localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+            DefaultMaterialLocalizations.delegate,
+            DefaultWidgetsLocalizations.delegate,
+            DefaultCupertinoLocalizations.delegate,
+          ],
+          title: "One Place",
+          home: StreamProvider<User?>.value(
+            value: FirebaseAuthService().userStream,
+            initialData: FirebaseAuthService().user,
+            child: SplashScreen(),
+          ),
+          material: (_, __) => MaterialAppData(
+            theme: materialTheme,
+          ),
+          cupertino: (_, __) => CupertinoAppData(
+            theme: CupertinoThemeData(
+              brightness: Brightness.dark,
+              primaryColor: CupertinoColors.white,
             ),
           ),
         ),
       ),
     );
+    // );
   }
 }
 
@@ -91,8 +90,15 @@ class _OnePlaceTabs extends State<OnePlaceTabs> {
   final GlobalKey<NavigatorState> libraryTabKey = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> feedTabKey = GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> addItemTabKey = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> settingsTabKey = GlobalKey<NavigatorState>();
   late Widget Function(BuildContext, int) contentBuilder;
   late PlatformTabController tabController;
+  final List<String> titles = [
+    "Library",
+    "Feed",
+    "New Item",
+    "Settings",
+  ];
   final List<BottomNavigationBarItem> Function(BuildContext)
       navigationBarItems = (BuildContext context) => [
             BottomNavigationBarItem(
@@ -107,11 +113,14 @@ class _OnePlaceTabs extends State<OnePlaceTabs> {
               icon: Icon(PlatformIcons(context).addCircledOutline),
               label: "New Item",
             ),
+            BottomNavigationBarItem(
+              icon: Icon(PlatformIcons(context).settings),
+              label: "Settings",
+            ),
           ];
   @override
   void initState() {
     super.initState();
-    final List<String> titles = ["Library", "Feed", "New Item"];
     final List<Widget> widgets = [
       LibraryTab(
         key: libraryTabKey,
@@ -121,7 +130,10 @@ class _OnePlaceTabs extends State<OnePlaceTabs> {
       ),
       AddItemTab(
         key: addItemTabKey,
-      )
+      ),
+      SettingsTab(
+        key: settingsTabKey,
+      ),
     ];
 
     tabController = PlatformTabController(
@@ -150,6 +162,7 @@ class _OnePlaceTabs extends State<OnePlaceTabs> {
         backgroundColor: AppColors.secondaryUofIDark,
       ),
       materialTabs: (context, platform) => MaterialNavBarData(
+          type: BottomNavigationBarType.fixed,
           selectedItemColor: Colors.white,
           unselectedItemColor: Colors.grey[400],
           backgroundColor: AppColors.secondaryUofIDark),

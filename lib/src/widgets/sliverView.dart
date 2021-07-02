@@ -24,7 +24,7 @@ class SliverView extends StatelessWidget {
           material: (context, _) => SliverAppBar(
             pinned: true,
             forceElevated: true,
-            expandedHeight: 100.0,
+            expandedHeight: 80.0,
             backgroundColor: AppColors.secondaryUofIDark,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
