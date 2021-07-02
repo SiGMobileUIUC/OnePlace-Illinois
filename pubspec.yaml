@@ -18,7 +18,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # Messed up the versioning earlier, my bad.
 # Incrementing versions: Whenever you update the code, increment the build number. Whenever a new build is pushed to public release, increase the version number.
-version: 0.1.0+4
+version: 0.1.0+5
 
 environment:
   sdk: ">=2.12.0 <3.0.0"

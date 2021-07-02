@@ -59,8 +59,6 @@ class _OnePlaceState extends State<OnePlace> {
                 DefaultCupertinoLocalizations.delegate,
               ],
               title: "One Place",
-              // Had to remove the SplashScreen widget for the time being, causing errors with testing due to the Connectivity class, will look into it later.
-              // Might be better to just scrap the Connection test thing instead and just keep it for checking if a User is logged in or not.
               home: SplashScreen(),
               material: (_, __) => MaterialAppData(
                 theme: materialTheme,
