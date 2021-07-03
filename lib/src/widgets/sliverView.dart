@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
+import 'package:oneplace_illinois/src/screens/home/feedTab.dart';
+import 'package:oneplace_illinois/src/screens/home/search.dart';
 
 class SliverView extends StatelessWidget {
   SliverView({
@@ -15,6 +17,25 @@ class SliverView extends StatelessWidget {
   final String title;
   final List<Widget> children;
   final TextStyle? titleStyle;
+
+  Widget _search(BuildContext context) {
+    if (children[0] is FeedTab) {
+      return PlatformIconButton(
+        icon: Icon(PlatformIcons(context).search),
+        color: Colors.white,
+        onPressed: () {
+          showSearch(
+            context: context,
+            delegate: Search(),
+          );
+        },
+      );
+    }
+    return SizedBox(
+      height: 0,
+      width: 0,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +53,8 @@ class SliverView extends StatelessWidget {
                 style: titleStyle ?? TextStyle(),
               ),
             ),
-            brightness: Brightness.dark,
+            brightness: Brightness.light,
+            actions: [_search(context)],
           ),
           cupertino: (context, _) => CupertinoSliverNavigationBar(
             backgroundColor: AppColors.secondaryUofIDark,
@@ -42,7 +64,7 @@ class SliverView extends StatelessWidget {
                 width: 0.5,
               ),
             ),
-            brightness: Brightness.dark,
+            brightness: Brightness.light,
             largeTitle: Text(
               title,
               style: titleStyle ?? TextStyle(),
