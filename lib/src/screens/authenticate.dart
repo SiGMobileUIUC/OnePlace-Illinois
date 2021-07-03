@@ -116,8 +116,10 @@ class _AuthenticateState extends State<Authenticate> {
                       email = value;
                     });
                   },
-                  validator: EmailValidator(
-                      errorText: "Please enter a valid email address."),
+                  validator: PatternValidator(r"[A-Za-z0-9._%+-]+@illinois.edu",
+                      caseSensitive: true,
+                      errorText:
+                          "Please enter a valid Illinois email address."),
                 ),
                 SizedBox(
                   height: 20.0,
