@@ -18,7 +18,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # Messed up the versioning earlier, my bad.
 # Incrementing versions: Whenever you update the code, increment the build number. Whenever a new build is pushed to public release, increase the version number.
-version: 0.1.0+7
+version: 0.1.0+8
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -35,6 +35,8 @@ dependencies:
   firebase_auth: ^1.4.1
   cloud_firestore: ^2.2.2
   form_field_validator: ^1.1.0
+  http: ^0.13.3
+  xml2json: ^5.3.1
 
 dev_dependencies:
   flutter_test:

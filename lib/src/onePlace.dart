@@ -33,6 +33,14 @@ class _OnePlaceState extends State<OnePlace> {
       ),
       brightness: Brightness.light,
       primaryColor: Colors.white,
+      appBarTheme: AppBarTheme(
+        color: AppColors.secondaryUofIDark,
+        actionsIconTheme: IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        hintStyle: TextStyle(color: Colors.white),
+      ),
     );
 
     // Future proofing; If we ever need to access a class or object that is not a part of the current class or screen, we can by initializing a provider here.
@@ -66,7 +74,7 @@ class _OnePlaceState extends State<OnePlace> {
           ),
           cupertino: (_, __) => CupertinoAppData(
             theme: CupertinoThemeData(
-              brightness: Brightness.dark,
+              brightness: Brightness.light,
               primaryColor: CupertinoColors.white,
             ),
           ),
