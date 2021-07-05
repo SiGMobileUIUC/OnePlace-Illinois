@@ -27,43 +27,39 @@ class _EmailVerificationState extends State<EmailVerification> {
         ),
         iosContentPadding: true,
         body: Center(
-              child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Please check your inbox for a verification email.',
-                  textAlign: TextAlign.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Please check your inbox for a verification email.',
+                textAlign: TextAlign.center,
+              ),
+              PlatformElevatedButton(
+                onPressed: () => _authService.reloadUser(),
+                child: Text(
+                  "Continue to Home",
                 ),
-                PlatformElevatedButton(
-                  onPressed: () => _authService.reloadUser(),
-                  child: Text(
-                    "Continue to Home",
-                  ),
-                  cupertino: (context, platform) =>
-                      CupertinoElevatedButtonData(color: AppColors.primaryUofI),
-                  material: (context, platform) => MaterialElevatedButtonData(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              AppColors.primaryUofI))),
+                cupertino: (context, platform) =>
+                    CupertinoElevatedButtonData(color: AppColors.primaryUofI),
+                material: (context, platform) => MaterialElevatedButtonData(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(AppColors.primaryUofI))),
+              ),
+              PlatformElevatedButton(
+                onPressed: () => _authService.resendVerificationEmail(),
+                child: Text(
+                  "Resend Verification Email",
                 ),
-                PlatformElevatedButton(
-                  onPressed: () => _authService.resendVerificationEmail(),
-                  child: Text(
-                    "Resend Verification Email",
-                  ),
-                  cupertino: (context, platform) =>
-                      CupertinoElevatedButtonData(color: AppColors.primaryUofI),
-                  material: (context, platform) => MaterialElevatedButtonData(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              AppColors.primaryUofI))),
-                ),
-              ],
-            ),
-          ],
+                cupertino: (context, platform) =>
+                    CupertinoElevatedButtonData(color: AppColors.primaryUofI),
+                material: (context, platform) => MaterialElevatedButtonData(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(AppColors.primaryUofI))),
+              ),
+            ],
+          ),
         ));
   }
 }
