@@ -168,11 +168,15 @@ class _AuthenticateState extends State<Authenticate> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       dynamic user;
-                      if (widget.register) {
+
+                      bool isRegistering = widget.register;
+
+                      if (isRegistering) {
                         user = await _authService.register(email, password);
                       } else {
                         user = await _authService.signIn(email, password);
                       }
+
                       if (user is FirebaseAuthException) {
                         if (user.code == 'weak-password') {
                           setState(() {
@@ -186,6 +190,24 @@ class _AuthenticateState extends State<Authenticate> {
                         } else if (user.code == "user-not-found") {
                           setState(() {
                             authError = "This account does not exist.";
+                          });
+                        } else if (user.code == "wrong-password") {
+                          setState(() {
+                            authError = "Incorrect password, please try again.";
+                          });
+                        } else {
+                          setState(() {
+                            authError = "Please try again later.";
+                          });
+                        }
+                      } else if (user != null && !user.emailVerified) {
+                        //Handling user is not verified
+                        await user.sendEmailVerification();
+                        if (!isRegistering) {
+                          //User was trying to log in, need to warn that their account wasn't verified
+                          setState(() {
+                            authError =
+                                "Your account is not verified. Please check your inbox for an email from us.";
                           });
                         }
                       }

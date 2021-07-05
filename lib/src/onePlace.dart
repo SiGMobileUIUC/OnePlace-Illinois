@@ -46,9 +46,6 @@ class _OnePlaceState extends State<OnePlace> {
     // Future proofing; If we ever need to access a class or object that is not a part of the current class or screen, we can by initializing a provider here.
     /* return MultiProvider(
       providers: [
-        ChangeNotifierProvider<ConnectionStatusProvider>(
-          create: (context) => ConnectionStatusProvider(),
-        ),
       ],
       child: */
     return Theme(
