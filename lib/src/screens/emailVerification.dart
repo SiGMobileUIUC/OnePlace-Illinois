@@ -26,7 +26,8 @@ class _EmailVerificationState extends State<EmailVerification> {
           ),
         ),
         iosContentPadding: true,
-        body: Row(
+        body: Center(
+              child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Column(
