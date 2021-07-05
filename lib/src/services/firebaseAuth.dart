@@ -38,7 +38,32 @@ class FirebaseAuthService {
 
   // On auth state change stream
   Stream<User?> get userStream {
-    return _firebaseAuth.authStateChanges();
+    return _firebaseAuth.userChanges();
+  }
+
+  // Retrieves the latest User profile
+  void reloadUser() {
+    if (_firebaseAuth.currentUser != null) {
+      _firebaseAuth.currentUser!.reload();
+    }
+  }
+
+  // Resends verification email
+  void resendVerificationEmail() {
+    if (_firebaseAuth.currentUser != null) {
+      _firebaseAuth.currentUser!.sendEmailVerification();
+    }
+  }
+
+  //Checks if user is verified
+  bool isVerified() {
+    User? user = _firebaseAuth.currentUser;
+
+    if (user != null) {
+      return user.emailVerified;
+    }
+
+    return false;
   }
 
   // Get the current user
