@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:oneplace_illinois/src/services/firebaseAuth.dart';
 
 class EmailVerification extends StatefulWidget {
