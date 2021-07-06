@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/misc/enums.dart';
 import 'package:oneplace_illinois/src/models/courseItem.dart';
-import 'package:oneplace_illinois/src/resources/courseExplorerApi.dart';
+import 'package:oneplace_illinois/src/models/courseListItem.dart';
+import 'package:oneplace_illinois/src/providers/courseListApi.dart';
 import 'package:oneplace_illinois/src/widgets/alertBox.dart';
 
 class Search extends SearchDelegate<CourseItem> {
-  final CourseExplorerApi courseExplorerApi = CourseExplorerApi();
+  final CourseListAPI _courseListAPI = CourseListAPI();
   final CourseItem emptyCourseItem = CourseItem(
     year: 0,
     semester: Semester.Fall,
@@ -66,7 +68,7 @@ class Search extends SearchDelegate<CourseItem> {
   }
 
   _getCourses() {
-    return courseExplorerApi.getCourse(query);
+    return _courseListAPI.getCourses(query);
   }
 
   @override
@@ -74,19 +76,21 @@ class Search extends SearchDelegate<CourseItem> {
     return Container(
       child: FutureBuilder(
           future: _getCourses(),
-          builder:
-              (BuildContext context, AsyncSnapshot<List<CourseItem>> snapshot) {
+          builder: (BuildContext context,
+              AsyncSnapshot<List<CourseListItem>?> snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.none:
               case ConnectionState.waiting:
               case ConnectionState.active:
                 return Center(
-                  child: SpinKitCircle(
-                    color: Colors.white,
+                  child: SpinKitRing(
+                    color: AppColors.secondaryUofILight,
                   ),
                 );
               case ConnectionState.done:
-                if (!snapshot.hasData || snapshot.data == null) {
+                if (!snapshot.hasData ||
+                    snapshot.data == null ||
+                    snapshot.data!.isEmpty) {
                   return AlertBox(
                     child: Text(
                       'No Search results found for $query',
@@ -100,22 +104,26 @@ class Search extends SearchDelegate<CourseItem> {
                     return Column(
                       children: <Widget>[
                         ListTile(
-                          contentPadding: EdgeInsets.only(
-                              top: 5, bottom: 10, left: 10, right: 10),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 10.0, vertical: 5.0),
                           isThreeLine: true,
                           title: Text(
-                            snapshot.data![index].title,
+                            "${snapshot.data![index].subjectID} ${snapshot.data![index].subjectNumber}",
                             style: Theme.of(context)
                                 .textTheme
                                 .headline5!
-                                .copyWith(color: Colors.black),
+                                .copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
-                            snapshot.data![index].description,
+                            snapshot.data![index].name,
                             style: Theme.of(context)
                                 .textTheme
-                                .subtitle1!
-                                .copyWith(color: Colors.black),
+                                .headline6!
+                                .copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.normal),
                           ),
                         ),
                         Divider(),
