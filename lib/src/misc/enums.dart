@@ -1,7 +1,7 @@
 enum Semester { Fall, Winter, Spring, Summer }
 
 class Semesters {
-  static String toStr(Semester semester) {
+  static String toStr(Semester? semester) {
     switch (semester) {
       case Semester.Fall:
         return "Fall";
@@ -11,18 +11,20 @@ class Semesters {
         return "Spring";
       case Semester.Summer:
         return "Summer";
+      case null:
+        return "";
     }
   }
 
   static Semester? fromString(String semester) {
     switch (semester) {
-      case "Fall":
+      case "fall":
         return Semester.Fall;
-      case "Winter":
+      case "winter":
         return Semester.Winter;
-      case "Spring":
+      case "spring":
         return Semester.Spring;
-      case "Summer":
+      case "summer":
         return Semester.Summer;
     }
   }

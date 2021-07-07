@@ -9,12 +9,10 @@ class Instructor {
 
   factory Instructor.fromJSON(Map<String, dynamic> json) {
     dynamic instructor = Instructor(
-        firstname: json["ns2\$section"]["meetings"]["meeting"]["instructors"]
-                ["instructor"]["firstname"] ??
-            null,
-        lastname: json["ns2\$section"]["meetings"]["meeting"]["instructors"]
-                ["instructor"]["lastName"] ??
-            null);
+        firstname: json["meetings"]["meeting"]["instructors"]?["instructor"]
+            ["firstname"],
+        lastname: json["meetings"]["meeting"]["instructors"]?["instructor"]
+            ["lastName"]);
     return instructor;
   }
 }

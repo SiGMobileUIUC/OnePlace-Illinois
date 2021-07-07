@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:oneplace_illinois/src/models/courseItem.dart';
+import 'package:oneplace_illinois/src/models/courseListItem.dart';
 import 'package:xml2json/xml2json.dart';
 
 class CourseExplorerApi {
@@ -27,22 +28,18 @@ class CourseExplorerApi {
     }
   }
 
-  Future<List<CourseItem>> getCourse(String query) async {
-    DateTime now = DateTime.now();
-    List<String> queries = query.split(" ");
-    String? semester = getSemester(now);
+  Future<CourseItem?> getCourse(CourseListItem courseListItem) async {
     Uri uri = Uri.https(_authority,
-        "/cisapp/explorer/schedule/${now.year}/$semester/${queries[0].toUpperCase()}/${queries[1]}.xml");
+        "/cisapp/explorer/schedule/${courseListItem.year}/${courseListItem.term}/${courseListItem.subjectID}/${courseListItem.subjectNumber}.xml");
     final response = await client.get(uri);
 
     if (response.statusCode != 200) {
-      return [];
+      return null;
     }
     xml2json.parse(response.body);
     String data = xml2json.toGData();
     dynamic json = jsonDecode(data);
     CourseItem courseItem = CourseItem.fromJSON(json["ns2\$course"]);
-    List<CourseItem> items = [courseItem];
-    return items;
+    return courseItem;
   }
 }

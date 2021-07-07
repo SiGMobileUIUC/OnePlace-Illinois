@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -5,11 +6,14 @@ import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/misc/enums.dart';
 import 'package:oneplace_illinois/src/models/courseItem.dart';
 import 'package:oneplace_illinois/src/models/courseListItem.dart';
+import 'package:oneplace_illinois/src/providers/courseExplorerApi.dart';
 import 'package:oneplace_illinois/src/providers/courseListApi.dart';
+import 'package:oneplace_illinois/src/screens/home/specificCourseView.dart';
 import 'package:oneplace_illinois/src/widgets/alertBox.dart';
 
 class Search extends SearchDelegate<CourseItem> {
   final CourseListAPI _courseListAPI = CourseListAPI();
+  final CourseExplorerApi _courseExplorerApi = CourseExplorerApi();
   final CourseItem emptyCourseItem = CourseItem(
     year: 0,
     semester: Semester.Fall,
@@ -45,7 +49,9 @@ class Search extends SearchDelegate<CourseItem> {
         },
       ),
       IconButton(
-        icon: Icon(PlatformIcons(context).search),
+        icon: Icon(
+          PlatformIcons(context).search,
+        ),
         onPressed: () {
           showResults(context);
         },
@@ -69,6 +75,11 @@ class Search extends SearchDelegate<CourseItem> {
 
   _getCourses() {
     return _courseListAPI.getCourses(query);
+  }
+
+  Future<CourseItem?> _getCourse(CourseListItem courseListItem) async {
+    CourseItem? course = await _courseExplorerApi.getCourse(courseListItem);
+    return course;
   }
 
   @override
@@ -107,14 +118,18 @@ class Search extends SearchDelegate<CourseItem> {
                           contentPadding: EdgeInsets.symmetric(
                               horizontal: 10.0, vertical: 5.0),
                           isThreeLine: true,
-                          title: Text(
-                            "${snapshot.data![index].subjectID} ${snapshot.data![index].subjectNumber}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline5!
-                                .copyWith(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold),
+                          title: Hero(
+                            tag:
+                                "${snapshot.data![index].subjectID} ${snapshot.data![index].subjectNumber}",
+                            child: Text(
+                              "${snapshot.data![index].subjectID} ${snapshot.data![index].subjectNumber}",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline5!
+                                  .copyWith(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                            ),
                           ),
                           subtitle: Text(
                             snapshot.data![index].name,
@@ -125,8 +140,23 @@ class Search extends SearchDelegate<CourseItem> {
                                     color: Colors.black,
                                     fontWeight: FontWeight.normal),
                           ),
+                          onTap: () {
+                            Navigator.of(context, rootNavigator: true).push(
+                              CupertinoPageRoute(
+                                builder: (context) {
+                                  return CourseView(
+                                    course: _getCourse(snapshot.data![index]),
+                                    courseListItem: snapshot.data![index],
+                                  );
+                                },
+                              ),
+                            );
+                          },
                         ),
-                        Divider(),
+                        Divider(
+                          color: Colors.grey[700],
+                          thickness: 1.0,
+                        ),
                       ],
                     );
                   },
