@@ -3,15 +3,13 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
-import 'package:oneplace_illinois/src/misc/format.dart';
 import 'package:oneplace_illinois/src/models/homeworkItem.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeworkItemWidget extends StatelessWidget {
   static const warningTime = Duration(days: 2);
-  static final dueDateFormat = DateFormat("EEEE 'at' K a");
-  static final dueDateDurationFormat = DurationFormat(0.85);
+  static final dueDateFormatLong = DateFormat("EEEE, MMMM d 'at' h:m a");
   final HomeworkItem homework;
 
   HomeworkItemWidget({required this.homework});
@@ -54,21 +52,28 @@ class HomeworkItemWidget extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Row(
-                children: [
-                  Icon(PlatformIcons(context).time),
-                  SizedBox(width: 5),
-                  Text(
-                    homework.dueInfo,
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: homework.dueDate.difference(DateTime.now()) <
-                              warningTime
-                          ? AppColors.urbanaOrange
-                          : Colors.black,
-                    ),
-                  )
-                ],
+              InkWell(
+                onLongPress: () => ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(dueDateFormatLong.format(homework.dueDate)),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(PlatformIcons(context).time),
+                    SizedBox(width: 5),
+                    Text(
+                      homework.dueInfo,
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: homework.dueDate.difference(DateTime.now()) <
+                                warningTime
+                            ? AppColors.urbanaOrange
+                            : Colors.black,
+                      ),
+                    )
+                  ],
+                ),
               ),
             ],
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
