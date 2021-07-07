@@ -44,7 +44,7 @@ class HomeworkItem {
     }
 
     if (daysUntilDue <= 2) {
-      return 'Due in ${dueDateDurationFormat.format(timeUntilDue)}';
+      return 'Due ${dueDateDurationFormat.format(timeUntilDue, humanize: true)}';
     } else if (daysUntilDue >= 7 && daysUntilDue < 14) {
       return 'Due next ${dueDateFormat.format(dueDate)}';
     } else if (daysUntilDue >= 14) {
