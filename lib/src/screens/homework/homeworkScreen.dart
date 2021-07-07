@@ -21,10 +21,6 @@ class HomeworkScreen extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        leading: BackButton(
-          color: Colors.white,
-          onPressed: () => Navigator.pop(context),
-        ),
       ),
       body: Container(
         padding: EdgeInsets.all(8.0),

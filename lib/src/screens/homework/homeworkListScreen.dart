@@ -18,10 +18,6 @@ class HomeworkListScreen extends StatelessWidget {
       appBar: PlatformAppBar(
         backgroundColor: AppColors.secondaryUofIDark,
         title: Text('Homework', style: TextStyle(color: Colors.white)),
-        leading: BackButton(
-          color: Colors.white,
-          onPressed: () => Navigator.pop(context),
-        ),
       ),
       body: HomeworkList(
         homework: homework,
