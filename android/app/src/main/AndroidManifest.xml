@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="oneplace.sigmobile.acm.illinois.edu">
-   <application
+    <application
         android:label="oneplace_illinois"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -38,4 +38,14 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+    <queries>
+      <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:scheme="https" />
+      </intent>
+      <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:scheme="http" />
+      </intent>
+    </queries>
 </manifest>
