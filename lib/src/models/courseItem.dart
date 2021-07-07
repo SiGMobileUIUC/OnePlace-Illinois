@@ -1,26 +1,25 @@
 import 'package:oneplace_illinois/src/misc/enums.dart';
-import 'package:oneplace_illinois/src/models/courseSectionItem.dart';
 
 class CourseItem {
-  /// ns2:section -> parents -> calendarYear id
+  /// ns2:course -> parents -> calendarYear id
   int? year;
 
-  /// ns2:section -> parents -> term
+  /// ns2:course -> parents -> term
   Semester? semester;
 
-  /// ns2:section -> parents -> term id
+  /// ns2:course -> parents -> term id
   int? semesterID;
 
-  /// ns2:section -> parents -> subject
+  /// ns2:course -> parents -> subject
   String subject;
 
-  /// ns2:section -> parents -> subject id
+  /// ns2:course -> parents -> subject id
   String subjectID;
 
   /// ns2:course -> id
   int? courseID;
 
-  /// ns2:section -> course
+  /// ns2:course -> label
   String title;
 
   /// ns2:course -> description
@@ -38,8 +37,6 @@ class CourseItem {
   /// ns2:course -> genEdCategories -> category -> description
   String? category;
 
-  CourseSectionItem? courseSectionItem;
-
   CourseItem({
     required this.year,
     required this.semester,
@@ -53,13 +50,13 @@ class CourseItem {
     required this.courseSectionInformation,
     required this.classScheduleInformation,
     this.category,
-    this.courseSectionItem,
   });
 
   factory CourseItem.fromJSON(Map<String, dynamic> json) {
     dynamic course = CourseItem(
       year: int.tryParse(json["parents"]["calendarYear"]["id"]),
-      semester: Semesters.fromString(json["parents"]["term"]["\$t"].trim()[0]),
+      semester: Semesters.fromString(
+          json["parents"]["term"]["\$t"].split(" ")[0].toLowerCase()),
       semesterID: int.tryParse(json["parents"]["term"]["id"]),
       subject: json["parents"]["subject"]["\$t"],
       subjectID: json["parents"]["subject"]["id"],
@@ -67,15 +64,9 @@ class CourseItem {
       title: json["label"]["\$t"],
       description: json["description"]["\$t"],
       creditHours: json["creditHours"]["\$t"],
-      courseSectionInformation: json["courseSectionInformation"] != null
-          ? json["courseSectionInformation"]["\$t"]
-          : null,
-      classScheduleInformation: json["classScheduleInformation"] != null
-          ? json["classScheduleInformation"]["\$t"]
-          : null,
-      category: json["genEdCategories"] != null
-          ? json["genEdCategories"]["category"]["description"]["\$t"]
-          : null,
+      courseSectionInformation: json["courseSectionInformation"]?["\$t"],
+      classScheduleInformation: json["classScheduleInformation"]?["\$t"],
+      category: json["genEdCategories"]?["category"]?["description"]?["\$t"],
     );
     return course;
   }
