@@ -26,6 +26,7 @@ class Search extends SearchDelegate<CourseItem> {
     creditHours: "",
     courseSectionInformation: "",
     classScheduleInformation: "",
+    sectionsLinks: [],
     category: "",
   );
 
