@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/intl.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/misc/enums.dart';
 import 'package:oneplace_illinois/src/models/courseItem.dart';
 import 'package:oneplace_illinois/src/models/courseListItem.dart';
+import 'package:oneplace_illinois/src/models/sectionItem.dart';
+import 'package:oneplace_illinois/src/providers/courseExplorerApi.dart';
 import 'package:oneplace_illinois/src/widgets/alertBox.dart';
 import 'package:oneplace_illinois/src/widgets/sliverView.dart';
 
@@ -28,6 +31,8 @@ class CourseView extends StatefulWidget {
 }
 
 class _CourseViewState extends State<CourseView> {
+  final CourseExplorerApi _courseExplorerApi = CourseExplorerApi();
+
   List<Widget> _getDetails(CourseItem? course) {
     return <Widget>[
       ListTile(
@@ -108,7 +113,7 @@ class _CourseViewState extends State<CourseView> {
             Container(
               padding: EdgeInsets.only(bottom: 5.0),
               child: Text(
-                "Description",
+                "Description:",
                 style: Theme.of(context)
                     .textTheme
                     .headline6!
@@ -187,7 +192,176 @@ class _CourseViewState extends State<CourseView> {
                 ],
               ))
           : SizedBox(),
+      Divider(
+        color: Colors.grey[700],
+        endIndent: 25.0,
+        indent: 25.0,
+        thickness: 1.5,
+      ),
+      buildSections(course),
+      SizedBox(
+        height: MediaQuery.of(context).size.height / 3,
+      ),
     ];
+  }
+
+  _getSection(CourseItem? courseItem) {
+    return _courseExplorerApi.getSections(courseItem!.sectionsLinks);
+  }
+
+  Widget buildSections(CourseItem? courseItem) {
+    return FutureBuilder(
+      future: _getSection(courseItem),
+      builder:
+          (BuildContext context, AsyncSnapshot<List<SectionItem?>> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+          case ConnectionState.waiting:
+          case ConnectionState.active:
+            return Center(
+              child: SpinKitRing(
+                color: AppColors.secondaryUofILight,
+              ),
+            );
+          case ConnectionState.done:
+            if (!snapshot.hasData ||
+                snapshot.data == null ||
+                snapshot.data == []) {
+              return AlertBox(
+                child: Text(
+                  'No sections for ${courseItem!.subjectID} ${courseItem.subject}',
+                  style: TextStyle(color: Colors.white),
+                ),
+              );
+            }
+            return ListView.separated(
+              separatorBuilder: (context, index) {
+                return Divider(
+                  color: Colors.grey[700],
+                  endIndent: 25.0,
+                  indent: 25.0,
+                  thickness: 1.5,
+                );
+              },
+              itemCount: snapshot.data?.length ?? 0,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (BuildContext context, index) {
+                return ListTile(
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+                  isThreeLine: true,
+                  title: index == 0
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(bottom: 10.0),
+                              child: Text("Sections:",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline6!
+                                      .copyWith(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20.0)),
+                            ),
+                            Text(
+                              snapshot.data![index]?.sectionNumber ?? "",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20.0,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Text(
+                          snapshot.data![index]?.sectionNumber ?? "",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
+                          ),
+                        ),
+                  subtitle: Container(
+                    padding: EdgeInsets.only(top: 2.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Container(
+                              padding: EdgeInsets.all(2.0),
+                              child: Text(
+                                snapshot.data![index]?.enrollmentStatus ?? "",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle1!
+                                    .copyWith(
+                                        color: Colors.grey[700],
+                                        fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(2.0),
+                              child: Text(
+                                snapshot.data![index]?.meeting?.type?.trim() ??
+                                    "",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle1!
+                                    .copyWith(
+                                        color: Colors.grey[700],
+                                        fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Container(
+                              padding: EdgeInsets.all(2.0),
+                              child: Text(
+                                snapshot.data![index]!.instructors.isEmpty
+                                    ? ""
+                                    : snapshot.data![index]?.instructors[0]!
+                                            .fullName ??
+                                        "",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle1!
+                                    .copyWith(
+                                        color: Colors.grey[700],
+                                        fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Container(
+                              // padding: EdgeInsets.all(2.0),
+                              child: Text(
+                                "${DateFormat.MEd().format(snapshot.data![index]!.startDate)} - ${DateFormat.MEd().format(snapshot.data![index]!.endDate)}",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .subtitle1!
+                                    .copyWith(
+                                        color: Colors.grey[700],
+                                        fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+        }
+      },
+    );
   }
 
   @override
@@ -217,10 +391,19 @@ class _CourseViewState extends State<CourseView> {
               );
             case ConnectionState.done:
               if (!snapshot.hasData || snapshot.data == null) {
-                return AlertBox(
-                  child: Text(
-                    'Error loading details about this course.',
-                    style: TextStyle(color: Colors.white),
+                return SliverView(
+                  title:
+                      "${widget.courseListItem.subjectID} ${widget.courseListItem.subjectNumber}",
+                  children: [
+                    AlertBox(
+                      child: Text(
+                        'Error loading details about this course.',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    )
+                  ],
+                  titleStyle: TextStyle(
+                    color: Colors.white,
                   ),
                 );
               }

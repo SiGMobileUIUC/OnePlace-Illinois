@@ -34,6 +34,9 @@ class CourseItem {
   /// ns2:course -> classScheduleInformation
   String? classScheduleInformation;
 
+  /// ns2:course -> sections
+  List<String> sectionsLinks;
+
   /// ns2:course -> genEdCategories -> category -> description
   String? category;
 
@@ -49,10 +52,19 @@ class CourseItem {
     required this.creditHours,
     required this.courseSectionInformation,
     required this.classScheduleInformation,
+    required this.sectionsLinks,
     this.category,
   });
 
   factory CourseItem.fromJSON(Map<String, dynamic> json) {
+    List<String> _getSectionsLinks(dynamic sections) {
+      if (sections is List) {
+        return sections.map((e) => e["href"].toString()).toList();
+      } else {
+        return [sections["href"].toString()];
+      }
+    }
+
     dynamic course = CourseItem(
       year: int.tryParse(json["parents"]["calendarYear"]["id"]),
       semester: Semesters.fromString(
@@ -66,6 +78,7 @@ class CourseItem {
       creditHours: json["creditHours"]["\$t"],
       courseSectionInformation: json["courseSectionInformation"]?["\$t"],
       classScheduleInformation: json["classScheduleInformation"]?["\$t"],
+      sectionsLinks: _getSectionsLinks(json["sections"]?["section"]),
       category: json["genEdCategories"]?["category"]?["description"]?["\$t"],
     );
     return course;
