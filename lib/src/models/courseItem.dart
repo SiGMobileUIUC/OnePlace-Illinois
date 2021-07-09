@@ -38,7 +38,7 @@ class CourseItem {
   List<String> sectionsLinks;
 
   /// ns2:course -> genEdCategories -> category -> description
-  String? category;
+  List<String?>? categories;
 
   CourseItem({
     required this.year,
@@ -53,7 +53,7 @@ class CourseItem {
     required this.courseSectionInformation,
     required this.classScheduleInformation,
     required this.sectionsLinks,
-    this.category,
+    this.categories,
   });
 
   factory CourseItem.fromJSON(Map<String, dynamic> json) {
@@ -62,6 +62,19 @@ class CourseItem {
         return sections.map((e) => e["href"].toString()).toList();
       } else {
         return [sections["href"].toString()];
+      }
+    }
+
+    List<String> _getCategories(dynamic json) {
+      if (json is List) {
+        return json
+            .map((e) =>
+                e["ns2\$genEdAttributes"]["genEdAttribute"]["\$t"].toString())
+            .toList();
+      } else {
+        return [
+          json["ns2\$genEdAttributes"]["genEdAttribute"]["\$t"].toString()
+        ];
       }
     }
 
@@ -79,7 +92,7 @@ class CourseItem {
       courseSectionInformation: json["courseSectionInformation"]?["\$t"],
       classScheduleInformation: json["classScheduleInformation"]?["\$t"],
       sectionsLinks: _getSectionsLinks(json["sections"]?["section"]),
-      category: json["genEdCategories"]?["category"]?["description"]?["\$t"],
+      categories: _getCategories(json["genEdCategories"]?["category"]),
     );
     return course;
   }
