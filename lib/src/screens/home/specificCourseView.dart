@@ -88,7 +88,7 @@ class _CourseViewState extends State<CourseView> {
                   Container(
                     padding: EdgeInsets.all(2.0),
                     child: Text(
-                      course.category ?? "",
+                      course.categories?[0] ?? "",
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(
                           color: Colors.grey[700], fontWeight: FontWeight.bold),
                     ),

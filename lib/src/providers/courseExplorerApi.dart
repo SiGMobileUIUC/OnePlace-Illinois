@@ -32,11 +32,8 @@ class CourseExplorerApi {
   Future<List<CourseItem>> getCourses(String query) async {
     Uri uri =
         Uri.http(_authority, "/cisapi/schedule/courses", {"query": query});
-    final response = await client.get(uri, headers: {
-      "User-Agent": "YOUR_UA_STRING",
-      "Host": "courses.illinois.edu",
-      "Accept": "application/xml"
-    });
+    final response = await client.get(uri,
+        headers: {"Host": "courses.illinois.edu", "Accept": "application/xml"});
     if (response.statusCode != 200) {
       return [];
     }

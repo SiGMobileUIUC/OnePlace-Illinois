@@ -27,7 +27,7 @@ class Search extends SearchDelegate<CourseItem> {
     courseSectionInformation: "",
     classScheduleInformation: "",
     sectionsLinks: [],
-    category: "",
+    categories: [],
   );
 
   @override
