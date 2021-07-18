@@ -1,9 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oneplace_illinois/src/models/homeworkItem.dart';
-
-import '../../screens/homework/homeworkScreen.dart';
+import 'package:oneplace_illinois/src/screens/homework/homeworkScreen.dart';
 
 class HomeworkList extends StatelessWidget {
   final List<HomeworkItem> homework;
@@ -12,15 +11,21 @@ class HomeworkList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        for (var homeworkItem in homework)
-          Card(
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: homework.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Card(
+            color: MediaQuery.of(context).platformBrightness == Brightness.dark
+                ? Colors.grey[900]
+                : Colors.grey[350],
             child: ListTile(
-              title: Text(homeworkItem.name),
-              subtitle: homeworkItem.description != null
+              title: Text(homework[index].name),
+              subtitle: homework[index].description != null
                   ? Text(
-                      homeworkItem.description!,
+                      homework[index].description!,
                       overflow: TextOverflow.ellipsis,
                     )
                   : Text(
@@ -29,24 +34,21 @@ class HomeworkList extends StatelessWidget {
                     ),
               isThreeLine: false,
               trailing: Text(
-                homeworkItem.dueInfo,
+                homework[index].dueInfo,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              onTap: () => handleHomeworkItemTap(context, homeworkItem),
+              onTap: () {
+                Navigator.of(context, rootNavigator: true).push(
+                  CupertinoPageRoute(
+                    builder: (context) {
+                      return HomeworkScreen(homework: homework[index]);
+                    },
+                  ),
+                );
+              },
             ),
-            margin: EdgeInsets.only(top: 10, bottom: 10),
-          ),
-      ],
-      padding: EdgeInsets.all(20),
-    );
-  }
-
-  handleHomeworkItemTap(BuildContext context, HomeworkItem homework) {
-    Navigator.push(
-      context,
-      platformPageRoute(
-        context: context,
-        builder: (_) => HomeworkScreen(homework: homework),
+          );
+        },
       ),
     );
   }

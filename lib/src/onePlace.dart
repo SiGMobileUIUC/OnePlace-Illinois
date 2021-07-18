@@ -6,8 +6,9 @@ import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/screens/home/addItemTab.dart';
 import 'package:oneplace_illinois/src/screens/home/feedTab.dart';
 import 'package:oneplace_illinois/src/screens/home/libraryTab.dart';
-import 'package:oneplace_illinois/src/screens/home/settingsTab.dart';
-import 'package:oneplace_illinois/src/screens/splashScreen.dart';
+import 'package:oneplace_illinois/src/screens/home/search.dart';
+import 'package:oneplace_illinois/src/screens/settingsDrawer.dart';
+import 'package:oneplace_illinois/src/screens/login/splashScreen.dart';
 import 'package:oneplace_illinois/src/services/firebaseAuth.dart';
 import 'package:oneplace_illinois/src/widgets/sliverView.dart';
 import 'package:provider/provider.dart';
@@ -26,21 +27,17 @@ class OnePlace extends StatefulWidget {
 class _OnePlaceState extends State<OnePlace> {
   @override
   Widget build(BuildContext context) {
-    final materialTheme = ThemeData(
-      cupertinoOverrideTheme: CupertinoThemeData(
-        brightness: Brightness.light,
-        primaryColor: CupertinoColors.white,
-      ),
+    final darkTheme = CupertinoThemeData(
+      brightness: Brightness.dark,
+      scaffoldBackgroundColor: Colors.black,
+      barBackgroundColor: AppColors.secondaryUofIDark,
+      primaryColor: AppColors.secondaryUofILightest,
+    );
+    final lightTheme = CupertinoThemeData(
       brightness: Brightness.light,
-      primaryColor: Colors.white,
-      appBarTheme: AppBarTheme(
-        color: AppColors.secondaryUofIDark,
-        actionsIconTheme: IconThemeData(color: Colors.white),
-        iconTheme: IconThemeData(color: Colors.white),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        hintStyle: TextStyle(color: Colors.white),
-      ),
+      scaffoldBackgroundColor: Colors.white,
+      barBackgroundColor: AppColors.secondaryUofILight,
+      primaryColor: AppColors.secondaryUofILightest,
     );
 
     // Future proofing; If we ever need to access a class or object that is not a part of the current class or screen, we can by initializing a provider here.
@@ -48,33 +45,58 @@ class _OnePlaceState extends State<OnePlace> {
       providers: [
       ],
       child: */
-    return Theme(
-      data: materialTheme,
-      //  This is for multiplatform, it will load the themes based on the platform that is being used, in order to make the app feel natural to the user.
-      child: PlatformProvider(
-        settings: PlatformSettingsData(iosUsesMaterialWidgets: true),
-        builder: (context) => PlatformApp(
-          debugShowCheckedModeBanner: false,
-          localizationsDelegates: <LocalizationsDelegate<dynamic>>[
-            DefaultMaterialLocalizations.delegate,
-            DefaultWidgetsLocalizations.delegate,
-            DefaultCupertinoLocalizations.delegate,
-          ],
-          title: "One Place",
-          home: StreamProvider<User?>.value(
-            value: FirebaseAuthService().userStream,
-            initialData: FirebaseAuthService().user,
-            child: SplashScreen(),
-          ),
-          material: (_, __) => MaterialAppData(
-            theme: materialTheme,
-          ),
-          cupertino: (_, __) => CupertinoAppData(
-            theme: CupertinoThemeData(
-              brightness: Brightness.light,
-              primaryColor: CupertinoColors.white,
+    return PlatformProvider(
+      settings: PlatformSettingsData(iosUsesMaterialWidgets: true),
+      builder: (context) => PlatformApp(
+        debugShowCheckedModeBanner: false,
+        localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+          DefaultMaterialLocalizations.delegate,
+          DefaultWidgetsLocalizations.delegate,
+          DefaultCupertinoLocalizations.delegate,
+        ],
+        title: "One Place",
+        home: StreamProvider<User?>.value(
+          value: FirebaseAuthService().userStream,
+          initialData: FirebaseAuthService().user,
+          child: SplashScreen(),
+        ),
+        material: (_, __) => MaterialAppData(
+          theme: ThemeData(
+            brightness: Brightness.light,
+            scaffoldBackgroundColor: Colors.white,
+            canvasColor: Colors.white,
+            inputDecorationTheme: InputDecorationTheme(
+              hintStyle: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.white,
+            colorScheme: ColorScheme.light(),
+            appBarTheme: AppBarTheme(
+              backgroundColor: AppColors.secondaryUofILight,
+              actionsIconTheme: IconThemeData(color: Colors.white),
+              iconTheme: IconThemeData(color: Colors.white),
             ),
           ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            scaffoldBackgroundColor: Colors.black,
+            backgroundColor: Colors.black,
+            colorScheme: ColorScheme.dark(),
+            canvasColor: Colors.black,
+            inputDecorationTheme: InputDecorationTheme(
+              hintStyle: TextStyle(color: Colors.white),
+            ),
+            appBarTheme: AppBarTheme(
+              backgroundColor: AppColors.primaryUofI,
+              actionsIconTheme: IconThemeData(color: Colors.white),
+              iconTheme: IconThemeData(color: Colors.white),
+            ),
+          ),
+          themeMode: ThemeMode.system,
+        ),
+        cupertino: (_, __) => CupertinoAppData(
+          theme: MediaQuery.of(context).platformBrightness == Brightness.light
+              ? lightTheme
+              : darkTheme,
         ),
       ),
     );
@@ -102,7 +124,7 @@ class _OnePlaceTabs extends State<OnePlaceTabs> {
     "Library",
     "Feed",
     "New Item",
-    "Settings",
+    // "Settings",
   ];
   final List<BottomNavigationBarItem> Function(BuildContext)
       navigationBarItems = (BuildContext context) => [
@@ -118,11 +140,32 @@ class _OnePlaceTabs extends State<OnePlaceTabs> {
               icon: Icon(PlatformIcons(context).addCircledOutline),
               label: "New Item",
             ),
-            BottomNavigationBarItem(
+            /* BottomNavigationBarItem(
               icon: Icon(PlatformIcons(context).settings),
               label: "Settings",
-            ),
+            ), */
           ];
+
+  Widget _search(BuildContext context, int index) {
+    if (titles[index] == "Feed") {
+      return PlatformIconButton(
+        icon: Icon(
+          PlatformIcons(context).search,
+        ),
+        onPressed: () {
+          showSearch(
+            context: context,
+            delegate: Search(),
+          );
+        },
+      );
+    }
+    return SizedBox(
+      height: 0,
+      width: 0,
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -136,9 +179,9 @@ class _OnePlaceTabs extends State<OnePlaceTabs> {
       AddItemTab(
         key: addItemTabKey,
       ),
-      SettingsTab(
+      /* SettingsTab(
         key: settingsTabKey,
-      ),
+      ), */
     ];
 
     tabController = PlatformTabController(
@@ -148,7 +191,9 @@ class _OnePlaceTabs extends State<OnePlaceTabs> {
     contentBuilder = (BuildContext context, int index) => SliverView(
           title: titles[index],
           children: [widgets[index]],
-          titleStyle: TextStyle(color: Colors.white),
+          actions: [_search(context, index)],
+          drawer: SettingsDrawer(),
+          leading: null,
         );
   }
 
@@ -160,17 +205,27 @@ class _OnePlaceTabs extends State<OnePlaceTabs> {
       tabController: tabController,
       bodyBuilder: contentBuilder,
       items: navigationBarItems(context),
-      pageBackgroundColor: Colors.white,
       cupertinoTabs: (context, platform) => CupertinoTabBarData(
-        activeColor: CupertinoColors.white,
-        inactiveColor: CupertinoColors.extraLightBackgroundGray,
-        backgroundColor: AppColors.secondaryUofIDark,
+        activeColor:
+            MediaQuery.of(context).platformBrightness == Brightness.dark
+                ? AppColors.secondaryUofILightest
+                : AppColors.secondaryUofILight,
+        inactiveColor:
+            MediaQuery.of(context).platformBrightness == Brightness.dark
+                ? AppColors.secondaryUofILight
+                : AppColors.secondaryUofILightest,
       ),
       materialTabs: (context, platform) => MaterialNavBarData(
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.grey[400],
-          backgroundColor: AppColors.secondaryUofIDark),
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor:
+            MediaQuery.of(context).platformBrightness == Brightness.dark
+                ? AppColors.secondaryUofILightest
+                : AppColors.secondaryUofILight,
+        unselectedItemColor:
+            MediaQuery.of(context).platformBrightness == Brightness.dark
+                ? AppColors.secondaryUofILight
+                : AppColors.secondaryUofILightest,
+      ),
     );
   }
 }

@@ -56,10 +56,10 @@ class _AuthenticateState extends State<Authenticate> {
         FocusScope.of(context).unfocus();
       },
       child: PlatformScaffold(
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white,
         iosContentPadding: true,
         appBar: PlatformAppBar(
-          backgroundColor: AppColors.secondaryUofIDark,
+          // backgroundColor: AppColors.secondaryUofIDark,
           title: widget.register
               ? Text(
                   "Sign up for OnePlace",
@@ -98,7 +98,7 @@ class _AuthenticateState extends State<Authenticate> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: AppColors.secondaryUofILight,
+                        color: AppColors.secondaryUofILightest,
                         style: BorderStyle.solid,
                         width: 2.0,
                       ),
@@ -133,7 +133,7 @@ class _AuthenticateState extends State<Authenticate> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: AppColors.secondaryUofILight,
+                        color: AppColors.secondaryUofILightest,
                         style: BorderStyle.solid,
                         width: 2.0,
                       ),
@@ -152,8 +152,14 @@ class _AuthenticateState extends State<Authenticate> {
                         });
                       },
                       icon: showPassword
-                          ? Icon(PlatformIcons(context).eyeSolid)
-                          : Icon(PlatformIcons(context).eyeSlashSolid),
+                          ? Icon(
+                              PlatformIcons(context).eyeSolid,
+                              color: Colors.white,
+                            )
+                          : Icon(
+                              PlatformIcons(context).eyeSlashSolid,
+                              color: Colors.white,
+                            ),
                     ),
                   ),
                   onChanged: (value) {
@@ -216,12 +222,15 @@ class _AuthenticateState extends State<Authenticate> {
                   child: Text(
                     widget.register ? "Register" : "Sign In",
                   ),
-                  cupertino: (context, platform) =>
-                      CupertinoElevatedButtonData(color: AppColors.primaryUofI),
+                  cupertino: (context, platform) => CupertinoElevatedButtonData(
+                    color: AppColors.secondaryUofILightest,
+                  ),
                   material: (context, platform) => MaterialElevatedButtonData(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              AppColors.primaryUofI))),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                          AppColors.secondaryUofILightest),
+                    ),
+                  ),
                 ),
               ],
             ),

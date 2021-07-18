@@ -15,9 +15,9 @@ class CourseListItem {
 
   factory CourseListItem.fromJSON(Map<String, dynamic> json) {
     dynamic courseListItem = CourseListItem(
-      year: json['year'],
+      year: int.parse(json['year']),
       term: json['term'],
-      subjectID: json['subjectID'],
+      subjectID: json['subjectId'],
       subjectNumber: json['subjectNumber'],
       name: json['name'],
     );

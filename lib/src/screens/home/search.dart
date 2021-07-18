@@ -8,7 +8,7 @@ import 'package:oneplace_illinois/src/models/courseItem.dart';
 import 'package:oneplace_illinois/src/models/courseListItem.dart';
 import 'package:oneplace_illinois/src/providers/courseExplorerApi.dart';
 import 'package:oneplace_illinois/src/providers/courseListApi.dart';
-import 'package:oneplace_illinois/src/screens/home/specificCourseView.dart';
+import 'package:oneplace_illinois/src/screens/courses/specificCourseView.dart';
 import 'package:oneplace_illinois/src/widgets/alertBox.dart';
 
 class Search extends SearchDelegate<CourseItem> {
@@ -96,69 +96,75 @@ class Search extends SearchDelegate<CourseItem> {
               case ConnectionState.active:
                 return Center(
                   child: SpinKitRing(
-                    color: AppColors.secondaryUofILight,
+                    color: AppColors.secondaryUofILightest,
                   ),
                 );
               case ConnectionState.done:
                 if (!snapshot.hasData ||
                     snapshot.data == null ||
                     snapshot.data!.isEmpty) {
-                  return AlertBox(
-                    child: Text(
-                      'No Search results found for $query',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  );
+                  return query != ""
+                      ? AlertBox(
+                          child: Text(
+                            'No Search results found for $query',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )
+                      : Container();
                 }
                 return ListView.builder(
+                  padding: EdgeInsets.all(5.0),
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
-                    return Column(
-                      children: <Widget>[
-                        ListTile(
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 10.0, vertical: 5.0),
-                          isThreeLine: true,
-                          title: Hero(
-                            tag:
-                                "${snapshot.data![index].subjectID} ${snapshot.data![index].subjectNumber}",
-                            child: Text(
-                              "${snapshot.data![index].subjectID} ${snapshot.data![index].subjectNumber}",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline5!
-                                  .copyWith(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          subtitle: Text(
-                            snapshot.data![index].name,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline6!
-                                .copyWith(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal),
-                          ),
-                          onTap: () {
-                            Navigator.of(context, rootNavigator: true).push(
-                              CupertinoPageRoute(
-                                builder: (context) {
-                                  return CourseView(
-                                    course: _getCourse(snapshot.data![index]),
-                                    courseListItem: snapshot.data![index],
-                                  );
-                                },
+                    return Card(
+                      color: MediaQuery.of(context).platformBrightness ==
+                              Brightness.dark
+                          ? Colors.grey[900]
+                          : Colors.grey[350],
+                      child: ListTile(
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal: 10.0, vertical: 5.0),
+                        isThreeLine: true,
+                        title: Text(
+                          "${snapshot.data![index].subjectID} ${snapshot.data![index].subjectNumber}",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline5!
+                              .copyWith(
+                                  color: MediaQuery.of(context)
+                                              .platformBrightness ==
+                                          Brightness.light
+                                      ? Colors.black
+                                      : Colors.white,
+                                  fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          snapshot.data![index].name,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6!
+                              .copyWith(
+                                color:
+                                    MediaQuery.of(context).platformBrightness ==
+                                            Brightness.light
+                                        ? Colors.black
+                                        : Colors.white,
+                                fontWeight: FontWeight.normal,
                               ),
-                            );
-                          },
                         ),
-                        Divider(
-                          color: Colors.grey[700],
-                          thickness: 1.0,
-                        ),
-                      ],
+                        onTap: () {
+                          Navigator.of(context, rootNavigator: true).push(
+                            CupertinoPageRoute(
+                              builder: (context) {
+                                return CourseView(
+                                  course: _getCourse(snapshot.data![index]),
+                                  courseListItem: snapshot.data![index],
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
                     );
                   },
                 );
@@ -169,8 +175,6 @@ class Search extends SearchDelegate<CourseItem> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return Container(
-      color: Colors.white,
-    );
+    return Container();
   }
 }

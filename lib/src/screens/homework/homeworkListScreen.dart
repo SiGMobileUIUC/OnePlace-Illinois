@@ -3,8 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/models/homeworkItem.dart';
-
-import '../../widgets/homework/homeworkList.dart';
+import 'package:oneplace_illinois/src/widgets/homework/homeworkList.dart';
 
 class HomeworkListScreen extends StatelessWidget {
   final List<HomeworkItem> homework;

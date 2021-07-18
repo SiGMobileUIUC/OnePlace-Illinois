@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:oneplace_illinois/src/onePlace.dart';
-import 'package:oneplace_illinois/src/screens/authenticate.dart';
-import 'package:oneplace_illinois/src/screens/emailVerification.dart';
+import 'package:oneplace_illinois/src/screens/login/authenticate.dart';
+import 'package:oneplace_illinois/src/screens/login/emailVerification.dart';
 import 'package:provider/provider.dart';
 /*
 Loading screen while app checks user data and connects to the internet.
@@ -30,7 +30,6 @@ class _SplashState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     final User? user = Provider.of<User?>(context);
-
     //App Navigation
     if (user != null) {
       if (user.emailVerified) {
