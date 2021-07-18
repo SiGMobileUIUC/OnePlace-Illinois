@@ -9,14 +9,14 @@ class CourseListAPI {
   final endpoint = dotenv.env["BASE_ENDPOINT"];
 
   Future<List<CourseListItem>?> getCourses(String query) async {
-    Uri uri = Uri.http(endpoint!, '/api/courses/search/', {"query": query});
+    Uri uri = Uri.http(endpoint!, '/api/v1/course/search', {"keyword": query});
     final response = await client.get(uri);
 
     if (response.statusCode != 200) {
       print(jsonDecode(response.body)['error']);
       return null;
     }
-    List<dynamic> data = jsonDecode(response.body)['data']['courses'];
+    List<dynamic> data = jsonDecode(response.body)['courses'];
     List<CourseListItem> courses =
         data.map((e) => CourseListItem.fromJSON(e)).toList();
     List<CourseListItem> queriedCourses = courses

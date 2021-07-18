@@ -42,41 +42,63 @@ class HomeworkItemWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container(
-          child: Row(
-            children: [
-              Text(
-                homework.course.title,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+        ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+          isThreeLine: true,
+          title: FittedBox(
+            fit: BoxFit.fitWidth,
+            child: Text(
+              homework.course.title,
+              style: TextStyle(
+                // fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-              InkWell(
-                onLongPress: () => ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(dueDateFormatLong.format(homework.dueDate)),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(PlatformIcons(context).time),
-                    SizedBox(width: 5),
-                    Text(
-                      homework.dueInfo,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: homework.dueDate.difference(DateTime.now()) <
-                                warningTime
-                            ? AppColors.urbanaOrange
-                            : Colors.black,
+            ),
+          ),
+          subtitle: Container(
+            padding: EdgeInsets.only(top: 2.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.all(2.0),
+                      child: Text(
+                        "Due Date:",
+                        style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            color: Colors.grey[500],
+                            fontWeight: FontWeight.bold),
                       ),
-                    )
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(2.0),
+                      child: InkWell(
+                          onLongPress: () =>
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(dueDateFormatLong
+                                      .format(homework.dueDate)),
+                                ),
+                              ),
+                          child: Text(homework.dueInfo,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle1!
+                                  .copyWith(
+                                    color: homework.dueDate
+                                                .difference(DateTime.now()) <
+                                            warningTime
+                                        ? AppColors.urbanaOrange
+                                        : Colors.grey[500],
+                                    fontWeight: FontWeight.bold,
+                                  ))),
+                    ),
                   ],
                 ),
-              ),
-            ],
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              ],
+            ),
           ),
         ),
         Divider(),
@@ -123,24 +145,26 @@ class HomeworkItemWidget extends StatelessWidget {
                   ),
                   Spacer(),
                   PlatformButton(
-                      onPressed: () async =>
-                          await canLaunch(homework.assignmentUrl)
-                              ? await launch(homework.assignmentUrl)
-                              : null,
-                      child: Row(
-                        children: [
-                          Icon(PlatformIcons(context).eyeSolid),
-                          SizedBox(width: 5),
-                          PlatformText('View'),
-                        ],
-                      ),
-                      color: Colors.white,
-                      cupertino: (context, platform) => CupertinoButtonData(
-                          color: AppColors.secondaryUofILight),
-                      materialFlat: (context, platform) =>
-                          MaterialFlatButtonData(
-                              textColor: Colors.white,
-                              color: AppColors.secondaryUofILight)),
+                    onPressed: () async =>
+                        await canLaunch(homework.assignmentUrl)
+                            ? await launch(homework.assignmentUrl)
+                            : null,
+                    child: Row(
+                      children: [
+                        Icon(PlatformIcons(context).eyeSolid),
+                        SizedBox(width: 5),
+                        PlatformText('View'),
+                      ],
+                    ),
+                    color: Colors.white,
+                    cupertino: (context, platform) => CupertinoButtonData(
+                      color: AppColors.secondaryUofILight,
+                    ),
+                    materialFlat: (context, platform) => MaterialFlatButtonData(
+                      textColor: Colors.white,
+                      color: AppColors.secondaryUofILight,
+                    ),
+                  ),
                 ],
               )
             ],
@@ -160,62 +184,63 @@ class HomeworkItemWidget extends StatelessWidget {
               SizedBox(
                 height: 100,
                 width: 500,
-                child: ListView(
+                child: ListView.builder(
+                  itemCount: homework.files.length,
                   scrollDirection: Axis.horizontal,
                   shrinkWrap: true,
-                  children: [
-                    for (var file in homework.files)
-                      Card(
-                        child: InkWell(
-                          // TODO: Upload file
-                          onTap: () => {},
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  file.name,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                  itemBuilder: (context, index) {
+                    return Row(
+                      children: [
+                        Card(
+                          child: InkWell(
+                            // TODO: Upload file
+                            onTap: () => {},
+                            child: Container(
+                              padding: EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    homework.files[index].name,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                // TODO: Format file size with best unit choice
-                                Text('${file.size} B'),
-                                Spacer(),
-                                // TODO: Convert file mimeType to icon
-                                Icon(PlatformIcons(context).book),
-                              ],
+                                  // TODO: Format file size with best unit choice
+                                  Text('${homework.files[index].size} B'),
+                                  Spacer(),
+                                  // TODO: Convert file mimeType to icon
+                                  Icon(PlatformIcons(context).book),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    Card(
-                      child: InkWell(
-                        // TODO: Download file
-                        onTap: () => {},
-                        child: Container(
-                          padding: EdgeInsets.all(10),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                PlatformIcons(context).upArrow,
-                                color: AppColors.secondaryUofILight,
-                              ),
-                              Text(
-                                'Upload Media',
-                                style: TextStyle(
-                                  color: AppColors.secondaryUofILight,
+                        index == homework.files.length - 1
+                            ? Card(
+                                child: InkWell(
+                                  // TODO: Download file
+                                  onTap: () => {},
+                                  child: Container(
+                                    padding: EdgeInsets.all(10),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(PlatformIcons(context).upArrow),
+                                        Text(
+                                          'Upload Media',
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                              )
+                            : SizedBox(),
+                      ],
+                    );
+                  },
                 ),
               )
             ],

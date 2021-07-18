@@ -8,14 +8,16 @@ class BoxItem extends StatelessWidget {
   final double margin;
   final double padding;
   final double width;
+  final Color? color;
 
-  BoxItem(
-      {Key? key,
-      required this.child,
-      this.margin = 12.0,
-      this.padding = 12.0,
-      this.width = double.infinity})
-      : super(key: key);
+  BoxItem({
+    Key? key,
+    required this.child,
+    this.margin = 12.0,
+    this.padding = 12.0,
+    this.width = double.infinity,
+    this.color = AppColors.secondaryUofIDark,
+  }) : super(key: key);
 
   //factory BoxItem.sliding({Key key, @required this.child, this.margin = 12.0, this.padding = 12.0, this.width = });
   @override
@@ -25,7 +27,7 @@ class BoxItem extends StatelessWidget {
       padding: EdgeInsets.all(padding),
       margin: EdgeInsets.all(margin),
       decoration: BoxDecoration(
-        color: AppColors.secondaryUofIDark,
+        color: color,
         borderRadius: BorderRadius.circular(12.0),
       ),
       child: Material(
