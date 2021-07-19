@@ -61,11 +61,11 @@ class _FeedTabState extends State<FeedTab> {
 
   Widget buildItem(BuildContext context, FeedItem item) {
     VideoPlayerController? videoPlayerController;
-    if (item.type == FeedItemType.Lecture && item.attachmentUrl != null) {
-      videoPlayerController =
-          VideoPlayerController.network(item.attachmentUrl!);
-      await videoPlayerController.initialize();
-    }
+    // if (item.type == FeedItemType.Lecture && item.attachmentUrl != null) {
+    //   videoPlayerController =
+    //       VideoPlayerController.network(item.attachmentUrl!);
+    //   await videoPlayerController.initialize();
+    //}
 
     return Padding(
       padding: EdgeInsets.all(20),
