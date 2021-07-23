@@ -1,7 +1,10 @@
+import 'package:oneplace_illinois/src/providers/courseExplorerApi.dart';
+
 enum Semester { Fall, Winter, Spring, Summer }
 
 class Semesters {
-  static String toStr(Semester? semester) {
+  CourseExplorerApi _api = CourseExplorerApi();
+  String toStr(Semester semester) {
     switch (semester) {
       case Semester.Fall:
         return "Fall";
@@ -11,12 +14,10 @@ class Semesters {
         return "Spring";
       case Semester.Summer:
         return "Summer";
-      case null:
-        return "";
     }
   }
 
-  static Semester? fromString(String semester) {
+  Semester fromString(String semester) {
     switch (semester) {
       case "fall":
         return Semester.Fall;
@@ -27,5 +28,6 @@ class Semesters {
       case "summer":
         return Semester.Summer;
     }
+    return fromString(_api.getSemester(DateTime.now()).toString());
   }
 }

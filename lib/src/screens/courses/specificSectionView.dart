@@ -10,7 +10,7 @@ import 'package:oneplace_illinois/src/widgets/homework/homeworkList.dart';
 import 'package:oneplace_illinois/src/widgets/sliverView.dart';
 
 class SectionView extends StatefulWidget {
-  final SectionItem? sectionItem;
+  final SectionItem sectionItem;
   final CourseItem courseItem;
   const SectionView(
       {Key? key, required this.sectionItem, required this.courseItem})
@@ -24,10 +24,10 @@ class _SectionViewState extends State<SectionView> {
   final CourseItem course = CourseItem(
     year: 2021,
     semester: Semester.Fall,
-    semesterID: 120218,
+    semesterID: "fa",
     subject: 'Computer Science',
     subjectID: "CS",
-    courseID: null,
+    courseID: 0,
     title: 'Introduction to Computer Science I',
     description:
         'Basic concepts in computing and fundamental techniques for solving computational problems. Intended as a first course for computer science majors and others with a deep interest in computing. Credit is not given for both CS 124 and CS 125. Prerequisite: Three years of high school mathematics or MATH 112.',
@@ -35,7 +35,8 @@ class _SectionViewState extends State<SectionView> {
     courseSectionInformation:
         'Credit is not given for both CS 124 and CS 125. Prerequisite: Three years of high school mathematics or MATH 112.',
     classScheduleInformation: null,
-    sectionsLinks: [],
+    sections: [],
+    categories: [],
   );
 
   List<Widget> _getDetails(SectionItem? section) {
@@ -110,7 +111,7 @@ class _SectionViewState extends State<SectionView> {
                   Container(
                     padding: EdgeInsets.all(2.0),
                     child: Text(
-                      section.meeting!.buildingName ?? "",
+                      section.building,
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(
                             color: Colors.grey[500],
                             fontWeight: FontWeight.bold,
@@ -184,8 +185,7 @@ class _SectionViewState extends State<SectionView> {
   Widget build(BuildContext context) {
     return PlatformScaffold(
       body: SliverView(
-        title:
-            "${widget.courseItem.subjectID} ${widget.sectionItem!.courseID.toString()}",
+        title: "${widget.courseItem.subjectID} ${widget.courseItem.courseID}",
         children: _getDetails(widget.sectionItem),
         titleStyle: TextStyle(
           color: Colors.white,
