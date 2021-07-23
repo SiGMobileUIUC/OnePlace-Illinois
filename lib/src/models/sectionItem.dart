@@ -1,12 +1,9 @@
-import 'package:oneplace_illinois/src/models/instructor.dart';
-import 'package:oneplace_illinois/src/models/meeting.dart';
-
 class SectionItem {
   /// ns2:section -> sectionNumber
   String sectionNumber;
 
   /// ns2:section id
-  int? sectionID;
+  int sectionID;
 
   /// ns2:section -> sectionCappArea
   String? sectionCappArea;
@@ -19,20 +16,24 @@ class SectionItem {
 
   String? sectionNotes;
 
-  /// ns2:section -> startDate
+  /* /// ns2:section -> startDate
   DateTime startDate;
 
   /// ns2:section -> endDate
-  DateTime endDate;
+  DateTime endDate; */
 
   /// ns2:section -> meetings -> meeting -> instructors -> instructor
-  List<Instructor?> instructors;
+  List<String> instructors;
 
-  /// ns2:section -> meetings
-  Meeting? meeting;
+  String type;
 
-  /// ns2:section -> parents -> course -> id
-  int? courseID;
+  String typeCode;
+
+  String daysOfWeek;
+
+  String room;
+
+  String building;
 
   SectionItem({
     required this.sectionNumber,
@@ -41,35 +42,40 @@ class SectionItem {
     required this.partOfTerm,
     required this.enrollmentStatus,
     required this.sectionNotes,
-    required this.startDate,
-    required this.endDate,
+    // required this.startDate,
+    // required this.endDate,
     required this.instructors,
-    required this.meeting,
-    required this.courseID,
+    required this.type,
+    required this.typeCode,
+    required this.daysOfWeek,
+    required this.room,
+    required this.building,
   });
 
   factory SectionItem.fromJSON(Map<String, dynamic> json) {
-    List<Instructor?> _getInstructor(dynamic json) {
+    /* List<Instructor?> _getInstructor(dynamic json) {
       if (json is List) {
         return json.toList().map((e) => Instructor.fromJSON(e)).toList();
       } else {
         return [];
       }
-    }
+    } */
 
     dynamic courseSection = SectionItem(
-      sectionNumber: json["sectionNumber"]?["\$t"],
-      sectionID: int.tryParse(json["id"]),
-      sectionCappArea: json["sectionCappArea"]?["\$t"],
-      partOfTerm: json["partOfTerm"]["\$t"],
-      enrollmentStatus: json["enrollmentStatus"]["\$t"],
-      sectionNotes: json["sectionNotes"]?["\$t"],
-      startDate: DateTime.parse(json["startDate"]["\$t"].split("Z")[0]),
-      endDate: DateTime.parse(json["endDate"]["\$t"].split("Z")[0]),
-      instructors: _getInstructor(
-          json["meetings"]?["meeting"]?["instructors"]?["instructor"]),
-      meeting: Meeting.fromJSON(json),
-      courseID: int.tryParse(json["parents"]["course"]["id"]),
+      sectionNumber: json["code"],
+      sectionID: json["CRN"],
+      sectionCappArea: json["sectionCappArea"] ?? null,
+      partOfTerm: json["part_of_term"],
+      enrollmentStatus: json["enrollment_status"],
+      sectionNotes: json["sectionNotes"] ?? null,
+      // startDate: DateTime.parse(json["start_date"]),
+      // endDate: DateTime.parse(json["end_date"]),
+      instructors: [json["instructors"]],
+      type: json["type"],
+      typeCode: json["type_code"],
+      daysOfWeek: json["days_of_week"],
+      room: json["room"],
+      building: json["building"],
     );
     return courseSection;
   }

@@ -5,11 +5,11 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+// import 'package:flutter/cupertino.dart';
+// import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:oneplace_illinois/src/onePlace.dart';
-import 'package:oneplace_illinois/src/widgets/sliverView.dart';
+// import 'package:oneplace_illinois/src/onePlace.dart';
+// import 'package:oneplace_illinois/src/widgets/sliverView.dart';
 
 void main() {
   /*

@@ -5,19 +5,19 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/misc/enums.dart';
 import 'package:oneplace_illinois/src/models/courseItem.dart';
-import 'package:oneplace_illinois/src/models/courseListItem.dart';
-import 'package:oneplace_illinois/src/providers/courseExplorerApi.dart';
-import 'package:oneplace_illinois/src/providers/courseListApi.dart';
+
+import 'package:oneplace_illinois/src/providers/courseApi.dart';
 import 'package:oneplace_illinois/src/screens/courses/specificCourseView.dart';
 import 'package:oneplace_illinois/src/widgets/alertBox.dart';
 
 class Search extends SearchDelegate<CourseItem> {
-  final CourseListAPI _courseListAPI = CourseListAPI();
-  final CourseExplorerApi _courseExplorerApi = CourseExplorerApi();
+  List<CourseItem>? _courses = [];
+  final CourseAPI _courseAPI = CourseAPI();
+  // final CourseExplorerApi _courseExplorerApi = CourseExplorerApi();
   final CourseItem emptyCourseItem = CourseItem(
     year: 0,
     semester: Semester.Fall,
-    semesterID: 0,
+    semesterID: "0",
     subject: "",
     subjectID: "",
     courseID: 0,
@@ -26,8 +26,8 @@ class Search extends SearchDelegate<CourseItem> {
     creditHours: "",
     courseSectionInformation: "",
     classScheduleInformation: "",
-    sectionsLinks: [],
-    categories: [],
+    sections: [],
+    categories: [""],
   );
 
   @override
@@ -75,13 +75,13 @@ class Search extends SearchDelegate<CourseItem> {
   }
 
   _getCourses() {
-    return _courseListAPI.getCourses(query);
+    return _courseAPI.getCourses(query, false);
   }
 
-  Future<CourseItem?> _getCourse(CourseListItem courseListItem) async {
+  /* Future<CourseItem?> _getCourse(CourseListItem courseListItem) async {
     CourseItem? course = await _courseExplorerApi.getCourse(courseListItem);
     return course;
-  }
+  } */
 
   @override
   Widget buildResults(BuildContext context) {
@@ -89,7 +89,7 @@ class Search extends SearchDelegate<CourseItem> {
       child: FutureBuilder(
           future: _getCourses(),
           builder: (BuildContext context,
-              AsyncSnapshot<List<CourseListItem>?> snapshot) {
+              AsyncSnapshot<List<CourseItem>?> snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.none:
               case ConnectionState.waiting:
@@ -112,9 +112,10 @@ class Search extends SearchDelegate<CourseItem> {
                         )
                       : Container();
                 }
+                _courses = snapshot.data;
                 return ListView.builder(
                   padding: EdgeInsets.all(5.0),
-                  itemCount: snapshot.data!.length,
+                  itemCount: _courses!.length,
                   itemBuilder: (context, index) {
                     return Card(
                       color: MediaQuery.of(context).platformBrightness ==
@@ -126,7 +127,7 @@ class Search extends SearchDelegate<CourseItem> {
                             horizontal: 10.0, vertical: 5.0),
                         isThreeLine: true,
                         title: Text(
-                          "${snapshot.data![index].subjectID} ${snapshot.data![index].subjectNumber}",
+                          "${_courses![index].subjectID} ${_courses![index].courseID}",
                           style: Theme.of(context)
                               .textTheme
                               .headline5!
@@ -139,7 +140,7 @@ class Search extends SearchDelegate<CourseItem> {
                                   fontWeight: FontWeight.bold),
                         ),
                         subtitle: Text(
-                          snapshot.data![index].name,
+                          _courses![index].title,
                           style: Theme.of(context)
                               .textTheme
                               .headline6!
@@ -157,8 +158,7 @@ class Search extends SearchDelegate<CourseItem> {
                             CupertinoPageRoute(
                               builder: (context) {
                                 return CourseView(
-                                  course: _getCourse(snapshot.data![index]),
-                                  courseListItem: snapshot.data![index],
+                                  course: _courses![index],
                                 );
                               },
                             ),

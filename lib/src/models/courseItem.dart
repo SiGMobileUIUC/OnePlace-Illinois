@@ -1,14 +1,15 @@
 import 'package:oneplace_illinois/src/misc/enums.dart';
+import 'package:oneplace_illinois/src/models/sectionItem.dart';
 
-class CourseItem {
+class CourseItem implements Comparable {
   /// ns2:course -> parents -> calendarYear id
-  int? year;
+  int year;
 
   /// ns2:course -> parents -> term
-  Semester? semester;
+  Semester semester;
 
   /// ns2:course -> parents -> term id
-  int? semesterID;
+  String semesterID;
 
   /// ns2:course -> parents -> subject
   String subject;
@@ -17,7 +18,7 @@ class CourseItem {
   String subjectID;
 
   /// ns2:course -> id
-  int? courseID;
+  int courseID;
 
   /// ns2:course -> label
   String title;
@@ -35,10 +36,10 @@ class CourseItem {
   String? classScheduleInformation;
 
   /// ns2:course -> sections
-  List<String> sectionsLinks;
+  List<SectionItem> sections;
 
   /// ns2:course -> genEdCategories -> category -> description
-  List<String?>? categories;
+  List<String> categories;
 
   CourseItem({
     required this.year,
@@ -52,12 +53,13 @@ class CourseItem {
     required this.creditHours,
     required this.courseSectionInformation,
     required this.classScheduleInformation,
-    required this.sectionsLinks,
-    this.categories,
+    required this.sections,
+    required this.categories,
   });
 
-  factory CourseItem.fromJSON(Map<String, dynamic> json) {
-    List<String> _getSectionsLinks(dynamic sections) {
+  factory CourseItem.fromJSON(Map<String, dynamic> json, bool onlyCourses) {
+    Semesters _sem = Semesters();
+    /* List<String> _getSectionsLinks(dynamic sections) {
       if (sections is List) {
         return sections.map((e) => e["href"].toString()).toList();
       } else {
@@ -76,24 +78,63 @@ class CourseItem {
           json["ns2\$genEdAttributes"]["genEdAttribute"]["\$t"].toString()
         ];
       }
+    } */
+
+    List<SectionItem> _getSections(List<dynamic> list) {
+      List<SectionItem> sections =
+          list.map((e) => SectionItem.fromJSON(e)).toList();
+      return sections;
     }
 
     dynamic course = CourseItem(
-      year: int.tryParse(json["parents"]["calendarYear"]["id"]),
-      semester: Semesters.fromString(
-          json["parents"]["term"]["\$t"].split(" ")[0].toLowerCase()),
-      semesterID: int.tryParse(json["parents"]["term"]["id"]),
-      subject: json["parents"]["subject"]["\$t"],
-      subjectID: json["parents"]["subject"]["id"],
-      courseID: int.tryParse(json["id"].trim()[1]),
-      title: json["label"]["\$t"],
-      description: json["description"]["\$t"],
-      creditHours: json["creditHours"]["\$t"],
-      courseSectionInformation: json["courseSectionInformation"]?["\$t"],
-      classScheduleInformation: json["classScheduleInformation"]?["\$t"],
-      sectionsLinks: _getSectionsLinks(json["sections"]?["section"]),
-      categories: _getCategories(json["genEdCategories"]?["category"]),
+      year: json["year"],
+      semester: _sem.fromString(json["semester"]),
+      semesterID: json["semesterID"],
+      subject: json["subject"],
+      subjectID: json["subjectId"],
+      courseID: json["courseId"],
+      title: json["name"],
+      description: json["description"],
+      creditHours: json["creditHours"],
+      courseSectionInformation: json["courseSectionInformation"] ?? null,
+      classScheduleInformation: json["classScheduleInformation"] ?? null,
+      sections: _getSections(json["sections"]),
+      categories: [json["genEd"]],
     );
     return course;
+  }
+
+  @override
+  int compareTo(dynamic list) {
+    String query = list[0];
+    CourseItem other = list[1];
+    if (this.subjectID.toLowerCase() == query.trimLeft().split(" ")[0] &&
+        other.subjectID.toLowerCase() == query.trimLeft().split(" ")[0]) {
+      if (this.courseID < other.courseID) {
+        return -1;
+      }
+      if (this.courseID == other.courseID) {
+        return 0;
+      }
+      if (this.courseID > other.courseID) {
+        return 1;
+      }
+    }
+
+    if (this.subjectID.toLowerCase() == query.trimLeft().split(" ")[0] &&
+        other.subjectID.toLowerCase() != query.trimLeft().split(" ")[0]) {
+      return -1;
+    }
+
+    if (this.subjectID.toLowerCase() != query.trimLeft().split(" ")[0] &&
+        other.subjectID.toLowerCase() == query.trimLeft().split(" ")[0]) {
+      return 1;
+    }
+
+    if (this.subjectID.toLowerCase() != query.trimLeft().split(" ")[0] &&
+        other.subjectID.toLowerCase() != query.trimLeft().split(" ")[0]) {
+      return 0;
+    }
+    return 0;
   }
 }

@@ -1,14 +1,9 @@
-import 'dart:convert';
-
 import 'package:http/http.dart';
-import 'package:oneplace_illinois/src/models/courseItem.dart';
-import 'package:oneplace_illinois/src/models/courseListItem.dart';
-import 'package:oneplace_illinois/src/models/sectionItem.dart';
 import 'package:xml2json/xml2json.dart';
 
 class CourseExplorerApi {
   Client client = Client();
-  final String _authority = "courses.illinois.edu";
+  // final String _authority = "courses.illinois.edu";
   final Xml2Json xml2json = Xml2Json();
 
   String? getSemester(DateTime dateTime) {
@@ -29,7 +24,7 @@ class CourseExplorerApi {
     }
   }
 
-  Future<List<CourseItem>> getCourses(String query) async {
+/*   Future<List<CourseItem>> getCourses(String query) async {
     Uri uri =
         Uri.http(_authority, "/cisapi/schedule/courses", {"query": query});
     final response = await client.get(uri,
@@ -75,5 +70,5 @@ class CourseExplorerApi {
       sections.add(sectionItem);
     }
     return sections;
-  }
+  } */
 }
