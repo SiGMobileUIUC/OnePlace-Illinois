@@ -11,6 +11,7 @@ import 'package:oneplace_illinois/src/screens/courses/specificSectionView.dart';
 import 'package:oneplace_illinois/src/screens/homework/homeworkScreen.dart';
 import 'package:oneplace_illinois/src/widgets/boxItem.dart';
 import 'package:oneplace_illinois/src/widgets/inherited/apiWidget.dart';
+import 'package:oneplace_illinois/src/widgets/button.dart';
 import 'package:video_player/video_player.dart';
 
 /*
@@ -115,29 +116,23 @@ class _FeedTabState extends State<FeedTab> {
                         ],
                       ),
                     Spacer(),
-                    PlatformButton(
-                        onPressed: () => Navigator.of(context).push(
-                              platformPageRoute(
-                                context: context,
-                                builder: (context) {
-                                  return _getScreenForFeedItem(item);
-                                },
-                              ),
-                            ),
-                        child: Row(
-                          children: [
-                            Icon(PlatformIcons(context).eyeSolid),
-                            SizedBox(width: 5),
-                            PlatformText('View'),
-                          ],
+                    Button(
+                      onPressed: () => Navigator.of(context).push(
+                        platformPageRoute(
+                          context: context,
+                          builder: (context) {
+                            return _getScreenForFeedItem(item);
+                          },
                         ),
-                        color: Colors.white,
-                        cupertino: (context, platform) => CupertinoButtonData(
-                            color: AppColors.secondaryUofILight),
-                        materialFlat: (context, platform) =>
-                            MaterialFlatButtonData(
-                                textColor: Colors.white,
-                                color: AppColors.secondaryUofILight)),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(PlatformIcons(context).eyeSolid),
+                          SizedBox(width: 5),
+                          PlatformText('View'),
+                        ],
+                      ),
+                    ),
                   ],
                 )
               ],

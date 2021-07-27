@@ -4,6 +4,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/models/homeworkItem.dart';
+import 'package:oneplace_illinois/src/widgets/button.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -75,25 +76,26 @@ class HomeworkItemWidget extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.all(2.0),
                       child: InkWell(
-                          onLongPress: () =>
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(dueDateFormatLong
-                                      .format(homework.dueDate)),
-                                ),
-                              ),
-                          child: Text(homework.dueInfo,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .subtitle1!
-                                  .copyWith(
+                        onLongPress: () =>
+                            ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                dueDateFormatLong.format(homework.dueDate)),
+                          ),
+                        ),
+                        child: Text(
+                          homework.dueInfo,
+                          style:
+                              Theme.of(context).textTheme.subtitle1!.copyWith(
                                     color: homework.dueDate
                                                 .difference(DateTime.now()) <
                                             warningTime
                                         ? AppColors.urbanaOrange
                                         : Colors.grey[500],
                                     fontWeight: FontWeight.bold,
-                                  ))),
+                                  ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -144,7 +146,7 @@ class HomeworkItemWidget extends StatelessWidget {
                     style: TextStyle(fontSize: 16),
                   ),
                   Spacer(),
-                  PlatformButton(
+                  Button(
                     onPressed: () async =>
                         await canLaunch(homework.assignmentUrl)
                             ? await launch(homework.assignmentUrl)
@@ -155,14 +157,6 @@ class HomeworkItemWidget extends StatelessWidget {
                         SizedBox(width: 5),
                         PlatformText('View'),
                       ],
-                    ),
-                    color: Colors.white,
-                    cupertino: (context, platform) => CupertinoButtonData(
-                      color: AppColors.secondaryUofILight,
-                    ),
-                    materialFlat: (context, platform) => MaterialFlatButtonData(
-                      textColor: Colors.white,
-                      color: AppColors.secondaryUofILight,
                     ),
                   ),
                 ],
