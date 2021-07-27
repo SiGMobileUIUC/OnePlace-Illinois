@@ -44,7 +44,6 @@ class _FeedTabState extends State<FeedTab> {
       width: size.width,
       height: size.height,
       child: ListView.builder(
-        padding: EdgeInsets.all(20),
         itemCount: feedItems.length,
         itemBuilder: (context, i) => buildItem(context, feedItems[i]),
       ),
@@ -53,7 +52,7 @@ class _FeedTabState extends State<FeedTab> {
 
   Widget buildItem(BuildContext context, FeedItem item) {
     return Padding(
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.all(10),
       child: Card(
         child: InkWell(
           onTap: () => Navigator.of(context).push(
@@ -95,8 +94,7 @@ class _FeedTabState extends State<FeedTab> {
                   item.body,
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 10),
-                SizedBox(height: 10),
+                SizedBox(height: 20),
                 Row(
                   children: [
                     if (item.type == FeedItemType.Homework)
