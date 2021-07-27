@@ -77,7 +77,7 @@ class Search extends SearchDelegate<CourseItem> {
 
   _getCourses(BuildContext context) {
     var api = ApiServiceWidget.of(context).api;
-    return _courseAPI.getCourses(api, query, false);
+    return _courseAPI.getCourses(api, query);
   }
 
   /* Future<CourseItem?> _getCourse(CourseListItem courseListItem) async {

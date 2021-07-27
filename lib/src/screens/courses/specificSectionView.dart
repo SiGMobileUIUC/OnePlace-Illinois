@@ -3,84 +3,96 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/misc/enums.dart';
 import 'package:oneplace_illinois/src/models/courseItem.dart';
 import 'package:oneplace_illinois/src/models/file.dart';
 import 'package:oneplace_illinois/src/models/homeworkItem.dart';
 import 'package:oneplace_illinois/src/models/lectureItem.dart';
 import 'package:oneplace_illinois/src/models/sectionItem.dart';
+import 'package:oneplace_illinois/src/providers/courseApi.dart';
 import 'package:oneplace_illinois/src/widgets/homework/homeworkList.dart';
 import 'package:oneplace_illinois/src/widgets/lecture/lectureList.dart';
 import 'package:oneplace_illinois/src/widgets/sliverView.dart';
 
 class SectionView extends StatefulWidget {
-  final SectionItem sectionItem;
-  final CourseItem courseItem;
-  const SectionView(
-      {Key? key, required this.sectionItem, required this.courseItem})
-      : super(key: key);
+  final CourseAPI _courseAPI = CourseAPI();
+  late final String? sectionName;
+  late final String? sectionCode;
+  late final Future<SectionItem> section;
+  late final Future<CourseItem> course;
+
+  SectionView(
+      {Key? key,
+      String? sectionName,
+      String? sectionCode,
+      SectionItem? section,
+      CourseItem? course})
+      : super(key: key) {
+    assert(section != null || (sectionName != null && sectionCode != null));
+
+    this.sectionName = sectionName ?? '${course!.title} ${section!.sectionID}';
+    this.sectionCode = sectionCode;
+    this.section = section != null
+        ? Future.value(section)
+        : _courseAPI.getSection(sectionCode!);
+    this.course = course != null
+        ? Future.value(course)
+        : _courseAPI
+            .getCourses(sectionCode!.split('_')[0])
+            .then((items) => items![0]);
+  }
 
   @override
   _SectionViewState createState() => _SectionViewState();
 }
 
 class _SectionViewState extends State<SectionView> {
-  final CourseItem course = CourseItem(
-    year: 2021,
-    semester: Semester.Fall,
-    semesterID: "fa",
-    subject: 'Computer Science',
-    subjectID: "CS",
-    courseID: 0,
-    title: 'Introduction to Computer Science I',
-    description:
-        'Basic concepts in computing and fundamental techniques for solving computational problems. Intended as a first course for computer science majors and others with a deep interest in computing. Credit is not given for both CS 124 and CS 125. Prerequisite: Three years of high school mathematics or MATH 112.',
-    creditHours: '3 hours.',
-    courseSectionInformation:
-        'Credit is not given for both CS 124 and CS 125. Prerequisite: Three years of high school mathematics or MATH 112.',
-    classScheduleInformation: null,
-    sections: [],
-    categories: [],
-  );
+  List<HomeworkItem> homework = [];
 
-  List<Widget> _getDetails(SectionItem? section) {
-    List<HomeworkItem> homework = [
-      HomeworkItem(
-        dueDate: DateTime.now().add(Duration(days: 2)),
-        name: 'Practice Problems #1',
-        description: 'This homework will help prepare you for the test!',
-        assignmentUrl: 'https://example.com',
-        platform: 'turnitin',
-        course: course,
-        files: [
-          File(
-            name: 'Problem set.json',
-            mimeType: 'application/json',
-            size: 400,
-            url: 'https://example.com',
-          ),
-          File(
-            name: 'Problem set.json',
-            mimeType: 'application/json',
-            size: 400,
-            url: 'https://example.com',
-          ),
-          File(
-            name: 'Problem set.json',
-            mimeType: 'application/json',
-            size: 400,
-            url: 'https://example.com',
-          )
-        ],
-      ),
-      HomeworkItem(
-        name: 'Practice Problems #2',
-        dueDate: DateTime.now().add(Duration(days: 7)),
-        assignmentUrl: 'https://en.wikipedia.org/wiki/Hot_air_ballooning',
-        platform: 'turnitin',
-        course: course,
-      )
-    ];
+  _SectionViewState() {
+    // widget.course.then((course) {
+    //   homework = [
+    //     HomeworkItem(
+    //       dueDate: DateTime.now().add(Duration(days: 2)),
+    //       name: 'Practice Problems #1',
+    //       description: 'This homework will help prepare you for the test!',
+    //       assignmentUrl: 'https://example.com',
+    //       platform: 'turnitin',
+    //       course: course,
+    //       files: [
+    //         File(
+    //           name: 'Problem set.json',
+    //           mimeType: 'application/json',
+    //           size: 400,
+    //           url: 'https://example.com',
+    //         ),
+    //         File(
+    //           name: 'Problem set.json',
+    //           mimeType: 'application/json',
+    //           size: 400,
+    //           url: 'https://example.com',
+    //         ),
+    //         File(
+    //           name: 'Problem set.json',
+    //           mimeType: 'application/json',
+    //           size: 400,
+    //           url: 'https://example.com',
+    //         )
+    //       ],
+    //     ),
+    //     HomeworkItem(
+    //       name: 'Practice Problems #2',
+    //       dueDate: DateTime.now().add(Duration(days: 7)),
+    //       assignmentUrl: 'https://en.wikipedia.org/wiki/Hot_air_ballooning',
+    //       platform: 'turnitin',
+    //       course: course,
+    //     )
+    //   ];
+    // });
+  }
+
+  List<Widget> _getDetails(SectionItem section) {
     LinkedList<LectureItem> lectureItems = LinkedList();
     lectureItems.addAll([
       LectureItem(
@@ -114,7 +126,7 @@ class _SectionViewState extends State<SectionView> {
         contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
         isThreeLine: true,
         title: Text(
-          section!.sectionNumber,
+          section.sectionNumber,
           style: TextStyle(
             // color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -225,20 +237,47 @@ class _SectionViewState extends State<SectionView> {
   @override
   Widget build(BuildContext context) {
     return PlatformScaffold(
-      body: SliverView(
-        title: "${widget.courseItem.subjectID} ${widget.courseItem.courseID}",
-        children: _getDetails(widget.sectionItem),
-        titleStyle: TextStyle(
-          color: Colors.white,
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(PlatformIcons(context).addCircledOutline),
-            tooltip: "Add course to library.",
-          ),
-        ],
-        leading: null,
+      body: FutureBuilder(
+        future: Future.wait([widget.section, widget.course]),
+        initialData: null,
+        builder: (context, AsyncSnapshot<List<dynamic>?> snapshot) {
+          List<dynamic>? data;
+          if (snapshot.hasData) data = snapshot.data;
+
+          if (snapshot.connectionState == ConnectionState.waiting ||
+              data == null) {
+            return Center(
+              child: CircularProgressIndicator(
+                color: AppColors.urbanaOrange,
+              ),
+            );
+          } else if (snapshot.hasError) {
+            final error = snapshot.error;
+            return Center(
+              child: Text(error.toString()),
+            );
+          } else {
+            final SectionItem section = data[0];
+            final CourseItem course = data[1];
+            // return _getDetails(section);
+            return SliverView(
+              title: widget.sectionName ??
+                  '${course.subjectID}-${section.sectionID}',
+              children: _getDetails(section),
+              titleStyle: TextStyle(
+                color: Colors.white,
+              ),
+              actions: [
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(PlatformIcons(context).addCircledOutline),
+                  tooltip: "Add course to library.",
+                ),
+              ],
+              leading: null,
+            );
+          }
+        },
       ),
     );
   }
