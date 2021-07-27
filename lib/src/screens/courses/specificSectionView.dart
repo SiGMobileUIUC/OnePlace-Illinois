@@ -51,45 +51,45 @@ class _SectionViewState extends State<SectionView> {
   List<HomeworkItem> homework = [];
 
   _SectionViewState() {
-    // widget.course.then((course) {
-    //   homework = [
-    //     HomeworkItem(
-    //       dueDate: DateTime.now().add(Duration(days: 2)),
-    //       name: 'Practice Problems #1',
-    //       description: 'This homework will help prepare you for the test!',
-    //       assignmentUrl: 'https://example.com',
-    //       platform: 'turnitin',
-    //       course: course,
-    //       files: [
-    //         File(
-    //           name: 'Problem set.json',
-    //           mimeType: 'application/json',
-    //           size: 400,
-    //           url: 'https://example.com',
-    //         ),
-    //         File(
-    //           name: 'Problem set.json',
-    //           mimeType: 'application/json',
-    //           size: 400,
-    //           url: 'https://example.com',
-    //         ),
-    //         File(
-    //           name: 'Problem set.json',
-    //           mimeType: 'application/json',
-    //           size: 400,
-    //           url: 'https://example.com',
-    //         )
-    //       ],
-    //     ),
-    //     HomeworkItem(
-    //       name: 'Practice Problems #2',
-    //       dueDate: DateTime.now().add(Duration(days: 7)),
-    //       assignmentUrl: 'https://en.wikipedia.org/wiki/Hot_air_ballooning',
-    //       platform: 'turnitin',
-    //       course: course,
-    //     )
-    //   ];
-    // });
+    widget.course.then((course) {
+      homework = [
+        HomeworkItem(
+          dueDate: DateTime.now().add(Duration(days: 2)),
+          name: 'Practice Problems #1',
+          description: 'This homework will help prepare you for the test!',
+          assignmentUrl: 'https://example.com',
+          platform: 'turnitin',
+          course: course,
+          files: [
+            File(
+              name: 'Problem set.json',
+              mimeType: 'application/json',
+              size: 400,
+              url: 'https://example.com',
+            ),
+            File(
+              name: 'Problem set.json',
+              mimeType: 'application/json',
+              size: 400,
+              url: 'https://example.com',
+            ),
+            File(
+              name: 'Problem set.json',
+              mimeType: 'application/json',
+              size: 400,
+              url: 'https://example.com',
+            )
+          ],
+        ),
+        HomeworkItem(
+          name: 'Practice Problems #2',
+          dueDate: DateTime.now().add(Duration(days: 7)),
+          assignmentUrl: 'https://en.wikipedia.org/wiki/Hot_air_ballooning',
+          platform: 'turnitin',
+          course: course,
+        )
+      ];
+    });
   }
 
   List<Widget> _getDetails(SectionItem section) {
@@ -259,7 +259,6 @@ class _SectionViewState extends State<SectionView> {
           } else {
             final SectionItem section = data[0];
             final CourseItem course = data[1];
-            // return _getDetails(section);
             return SliverView(
               title: widget.sectionName ??
                   '${course.subjectID}-${section.sectionID}',

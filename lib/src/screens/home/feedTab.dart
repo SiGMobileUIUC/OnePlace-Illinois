@@ -1,9 +1,7 @@
-import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:intl/intl.dart';
-import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/models/feedItem.dart';
 import 'package:oneplace_illinois/src/models/sectionItem.dart';
 import 'package:oneplace_illinois/src/providers/feedApi.dart';
@@ -12,7 +10,6 @@ import 'package:oneplace_illinois/src/screens/homework/homeworkScreen.dart';
 import 'package:oneplace_illinois/src/widgets/boxItem.dart';
 import 'package:oneplace_illinois/src/widgets/inherited/apiWidget.dart';
 import 'package:oneplace_illinois/src/widgets/button.dart';
-import 'package:video_player/video_player.dart';
 
 /*
 Main page for the Feed tab, will add more details later.
@@ -45,12 +42,12 @@ class _FeedTabState extends State<FeedTab> {
       height: size.height,
       child: ListView.builder(
         itemCount: feedItems.length,
-        itemBuilder: (context, i) => buildItem(context, feedItems[i]),
+        itemBuilder: (context, i) => _buildItem(context, feedItems[i]),
       ),
     );
   }
 
-  Widget buildItem(BuildContext context, FeedItem item) {
+  Widget _buildItem(BuildContext context, FeedItem item) {
     return Padding(
       padding: EdgeInsets.all(10),
       child: Card(
@@ -66,73 +63,77 @@ class _FeedTabState extends State<FeedTab> {
               },
             ),
           ),
-          child: Container(
-            padding: EdgeInsets.all(5),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: () => Navigator.of(context).push(
-                        platformPageRoute(
-                          context: context,
-                          builder: (context) {
-                            return SectionView(
-                              sectionName: item.owner,
-                              sectionCode: item.itemCode,
-                            );
-                          },
-                        ),
-                      ),
-                      child: Text('${item.owner}'),
-                    ),
-                    Text(' posted ${item.name}'),
-                    Spacer(),
-                    Text('${postDateFormatter.format(item.postDate)}',
-                        style: TextStyle(color: Colors.grey[400])),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Text(
-                  item.body,
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 20),
-                Row(
-                  children: [
-                    if (item.type == FeedItemType.Homework)
-                      Row(
-                        children: [
-                          Icon(PlatformIcons(context).time),
-                          SizedBox(width: 5),
-                          Text('Appears in calendar',
-                              style: TextStyle(color: Colors.grey[450]))
-                        ],
-                      ),
-                    Spacer(),
-                    Button(
-                      onPressed: () => Navigator.of(context).push(
-                        platformPageRoute(
-                          context: context,
-                          builder: (context) {
-                            return _getScreenForFeedItem(item);
-                          },
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(PlatformIcons(context).eyeSolid),
-                          SizedBox(width: 5),
-                          PlatformText('View'),
-                        ],
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
+          child: _buildFeedItemWidget(item),
         ),
+      ),
+    );
+  }
+
+  Widget _buildFeedItemWidget(FeedItem item) {
+    return Container(
+      padding: EdgeInsets.all(5),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              InkWell(
+                onTap: () => Navigator.of(context).push(
+                  platformPageRoute(
+                    context: context,
+                    builder: (context) {
+                      return SectionView(
+                        sectionName: item.owner,
+                        sectionCode: item.itemCode,
+                      );
+                    },
+                  ),
+                ),
+                child: Text('${item.owner}'),
+              ),
+              Text(' posted ${item.name}'),
+              Spacer(),
+              Text('${postDateFormatter.format(item.postDate)}',
+                  style: TextStyle(color: Colors.grey[400])),
+            ],
+          ),
+          SizedBox(height: 10),
+          Text(
+            item.body,
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 20),
+          Row(
+            children: [
+              if (item.type == FeedItemType.Homework)
+                Row(
+                  children: [
+                    Icon(PlatformIcons(context).time),
+                    SizedBox(width: 5),
+                    Text('Appears in calendar',
+                        style: TextStyle(color: Colors.grey[450]))
+                  ],
+                ),
+              Spacer(),
+              Button(
+                onPressed: () => Navigator.of(context).push(
+                  platformPageRoute(
+                    context: context,
+                    builder: (context) {
+                      return _getScreenForFeedItem(item);
+                    },
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(PlatformIcons(context).eyeSolid),
+                    SizedBox(width: 5),
+                    PlatformText('View'),
+                  ],
+                ),
+              ),
+            ],
+          )
+        ],
       ),
     );
   }

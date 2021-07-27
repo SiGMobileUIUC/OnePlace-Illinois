@@ -265,18 +265,18 @@ class _CourseViewState extends State<CourseView> {
                 ? Colors.grey[900]
                 : Colors.grey[300],
             child: ListTile(
-              // onTap: () {
-              //   Navigator.of(context, rootNavigator: true).push(
-              //     CupertinoPageRoute(
-              //       builder: (context) {
-              //         return SectionView(
-              //           sectionName: courseItem,
-              //           sectionId: courseItem.sections[index].sectionID,
-              //         );
-              //       },
-              //     ),
-              //   );
-              // },
+              onTap: () {
+                Navigator.of(context, rootNavigator: true).push(
+                  CupertinoPageRoute(
+                    builder: (context) {
+                      return SectionView(
+                        course: courseItem,
+                        section: courseItem.sections[index],
+                      );
+                    },
+                  ),
+                );
+              },
               contentPadding:
                   EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
               isThreeLine: true,
