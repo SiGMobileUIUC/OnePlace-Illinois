@@ -15,10 +15,17 @@ class Button extends StatelessWidget {
       onPressed: onPressed,
       child: child,
       color: Colors.white,
-      cupertino: (context, platform) =>
-          CupertinoButtonData(color: AppColors.secondaryUofILight),
+      cupertino: (context, platform) => CupertinoButtonData(
+        color: MediaQuery.of(context).platformBrightness == Brightness.dark
+            ? AppColors.secondaryUofIDark
+            : AppColors.secondaryUofILight,
+      ),
       materialFlat: (context, platform) => MaterialFlatButtonData(
-          textColor: Colors.white, color: AppColors.secondaryUofILight),
+        textColor: Colors.white,
+        color: MediaQuery.of(context).platformBrightness == Brightness.dark
+            ? AppColors.secondaryUofIDark
+            : AppColors.secondaryUofILight,
+      ),
     );
   }
 }

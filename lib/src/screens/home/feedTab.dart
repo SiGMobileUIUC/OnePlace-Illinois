@@ -54,6 +54,9 @@ class _FeedTabState extends State<FeedTab> {
     return Padding(
       padding: EdgeInsets.all(10),
       child: Card(
+        color: MediaQuery.of(context).platformBrightness == Brightness.dark
+            ? Colors.grey[900]
+            : Colors.grey[300],
         child: InkWell(
           onTap: () => Navigator.of(context).push(
             platformPageRoute(
