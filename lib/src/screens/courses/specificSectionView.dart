@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/misc/enums.dart';
 import 'package:oneplace_illinois/src/models/courseItem.dart';
@@ -247,7 +248,7 @@ class _SectionViewState extends State<SectionView> {
           if (snapshot.connectionState == ConnectionState.waiting ||
               data == null) {
             return Center(
-              child: CircularProgressIndicator(
+              child: SpinKitRing(
                 color: AppColors.urbanaOrange,
               ),
             );

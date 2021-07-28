@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/models/homeworkItem.dart';
 import 'package:oneplace_illinois/src/providers/homeworkApi.dart';
@@ -69,7 +70,7 @@ class _HomeworkScreenState extends State<HomeworkScreen> {
             if (snapshot.connectionState == ConnectionState.waiting ||
                 data == null) {
               return Center(
-                child: CircularProgressIndicator(
+                child: SpinKitRing(
                   color: AppColors.urbanaOrange,
                 ),
               );
