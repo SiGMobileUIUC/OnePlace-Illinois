@@ -30,7 +30,8 @@ class SectionView extends StatefulWidget {
       SectionItem? section,
       CourseItem? course})
       : super(key: key) {
-    assert(section != null || (sectionName != null && sectionCode != null));
+    assert((section != null && course != null) ||
+        (sectionName != null && sectionCode != null));
 
     this.sectionName = sectionName ?? '${course!.title} ${section!.sectionID}';
     this.sectionCode = sectionCode;
@@ -48,48 +49,68 @@ class SectionView extends StatefulWidget {
   _SectionViewState createState() => _SectionViewState();
 }
 
+final CourseItem course = CourseItem(
+  year: 2021,
+  semester: Semester.Fall,
+  semesterID: '25',
+  subject: 'Math',
+  subjectID: "math",
+  courseID: 34535,
+  title: 'Calculus I',
+  description: 'Calulus 1 for people',
+  creditHours: '4',
+  courseSectionInformation: 'Only X people',
+  classScheduleInformation: "DAILY",
+  sections: [],
+  categories: ['hi'],
+);
+
 class _SectionViewState extends State<SectionView> {
   List<HomeworkItem> homework = [];
 
-  _SectionViewState() {
-    widget.course.then((course) {
-      homework = [
-        HomeworkItem(
-          dueDate: DateTime.now().add(Duration(days: 2)),
-          name: 'Practice Problems #1',
-          description: 'This homework will help prepare you for the test!',
-          assignmentUrl: 'https://example.com',
-          platform: 'turnitin',
-          course: course,
-          files: [
-            File(
-              name: 'Problem set.json',
-              mimeType: 'application/json',
-              size: 400,
-              url: 'https://example.com',
-            ),
-            File(
-              name: 'Problem set.json',
-              mimeType: 'application/json',
-              size: 400,
-              url: 'https://example.com',
-            ),
-            File(
-              name: 'Problem set.json',
-              mimeType: 'application/json',
-              size: 400,
-              url: 'https://example.com',
-            )
-          ],
-        ),
-        HomeworkItem(
-          name: 'Practice Problems #2',
-          dueDate: DateTime.now().add(Duration(days: 7)),
-          assignmentUrl: 'https://en.wikipedia.org/wiki/Hot_air_ballooning',
-          platform: 'turnitin',
-          course: course,
-        )
-      ];
+  @override
+  void initState() {
+    super.initState();
+    widget.course.then((_) {
+      setState(() {
+        homework = [
+          HomeworkItem(
+            dueDate: DateTime.now().add(Duration(days: 2)),
+            name: 'Practice Problems #1',
+            description: 'This homework will help prepare you for the test!',
+            assignmentUrl: 'https://example.com',
+            platform: 'turnitin',
+            course: course,
+            files: [
+              File(
+                name: 'Problem set.json',
+                mimeType: 'application/json',
+                size: 400,
+                url: 'https://example.com',
+              ),
+              File(
+                name: 'Problem set.json',
+                mimeType: 'application/json',
+                size: 400,
+                url: 'https://example.com',
+              ),
+              File(
+                name: 'Problem set.json',
+                mimeType: 'application/json',
+                size: 400,
+                url: 'https://example.com',
+              )
+            ],
+          ),
+          HomeworkItem(
+            name: 'Practice Problems #2',
+            dueDate: DateTime.now().add(Duration(days: 7)),
+            assignmentUrl: 'https://en.wikipedia.org/wiki/Hot_air_ballooning',
+            platform: 'turnitin',
+            course: course,
+          )
+        ];
+      });
     });
   }
 
