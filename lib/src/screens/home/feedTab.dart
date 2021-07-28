@@ -55,9 +55,8 @@ class _FeedTabState extends State<FeedTab> {
             ? Colors.grey[900]
             : Colors.grey[300],
         child: InkWell(
-          onTap: () => Navigator.of(context).push(
-            platformPageRoute(
-              context: context,
+          onTap: () => Navigator.of(context, rootNavigator: true).push(
+            CupertinoPageRoute(
               builder: (context) {
                 return _getScreenForFeedItem(item);
               },
