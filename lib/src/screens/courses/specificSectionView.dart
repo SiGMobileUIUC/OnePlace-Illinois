@@ -5,8 +5,10 @@ import 'package:oneplace_illinois/src/misc/enums.dart';
 import 'package:oneplace_illinois/src/models/courseItem.dart';
 import 'package:oneplace_illinois/src/models/file.dart';
 import 'package:oneplace_illinois/src/models/homeworkItem.dart';
+import 'package:oneplace_illinois/src/models/lectureItem.dart';
 import 'package:oneplace_illinois/src/models/sectionItem.dart';
 import 'package:oneplace_illinois/src/widgets/homework/homeworkList.dart';
+import 'package:oneplace_illinois/src/widgets/lecture/lectureList.dart';
 import 'package:oneplace_illinois/src/widgets/sliverView.dart';
 
 class SectionView extends StatefulWidget {
@@ -76,6 +78,16 @@ class _SectionViewState extends State<SectionView> {
         platform: 'turnitin',
         course: course,
       )
+    ];
+    List<LectureItem> lectureItems = [
+      LectureItem(
+        lectureUrl: "https://mediaspace.illinois.edu/media/t/1_46ekurb1",
+        platform: LecturePlatform.MediaSpace,
+        title: "Illustrator Getting Started",
+        lectureNumber: 1,
+        created: DateTime.now().subtract(Duration(days: 1)),
+        author: "Judi Geistlinger",
+      ),
     ];
 
     return <Widget>[
@@ -174,6 +186,16 @@ class _SectionViewState extends State<SectionView> {
       ),
       HomeworkList(
         homework: homework,
+      ),
+      Divider(
+        // color: Colors.grey[500],
+        endIndent: 25.0,
+        indent: 25.0,
+        thickness: 1.5,
+      ),
+      LectureList(
+        lectureItems: lectureItems,
+        courseItem: widget.courseItem,
       ),
       SizedBox(
         height: MediaQuery.of(context).size.height / 3,
