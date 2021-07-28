@@ -76,9 +76,8 @@ class _FeedTabState extends State<FeedTab> {
           Row(
             children: [
               InkWell(
-                onTap: () => Navigator.of(context).push(
-                  platformPageRoute(
-                    context: context,
+                onTap: () => Navigator.of(context, rootNavigator: true).push(
+                  CupertinoPageRoute(
                     builder: (context) {
                       return SectionView(
                         sectionName: item.owner,
