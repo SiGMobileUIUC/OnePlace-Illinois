@@ -114,9 +114,8 @@ class _FeedTabState extends State<FeedTab> {
                 ),
               Spacer(),
               Button(
-                onPressed: () => Navigator.of(context).push(
-                  platformPageRoute(
-                    context: context,
+                onPressed: () => Navigator.of(context, rootNavigator: true).push(
+                  CupertinoPageRoute(
                     builder: (context) {
                       return _getScreenForFeedItem(item);
                     },
