@@ -91,7 +91,7 @@ class _FeedTabState extends State<FeedTab> {
               Text(' posted ${item.name}'),
               Spacer(),
               Text('${postDateFormatter.format(item.postDate)}',
-                  style: TextStyle(color: Colors.grey[400])),
+                  style: TextStyle(color: Colors.grey[700])),
             ],
           ),
           SizedBox(height: 10),
@@ -113,7 +113,8 @@ class _FeedTabState extends State<FeedTab> {
                 ),
               Spacer(),
               Button(
-                onPressed: () => Navigator.of(context, rootNavigator: true).push(
+                onPressed: () =>
+                    Navigator.of(context, rootNavigator: true).push(
                   CupertinoPageRoute(
                     builder: (context) {
                       return _getScreenForFeedItem(item);
