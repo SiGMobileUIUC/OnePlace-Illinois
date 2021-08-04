@@ -27,7 +27,7 @@ final course = CourseItem(
 class HomeworkAPI {
   Client client = Client();
 
-  Future<HomeworkItem?> getHomework(String homeworkCode) async {
+  Future<HomeworkItem> getHomework(String homeworkCode) async {
     final homework = HomeworkItem(
       name: 'Homework 1',
       assignmentUrl: 'https://example.com',

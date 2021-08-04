@@ -9,18 +9,12 @@ import 'package:oneplace_illinois/src/widgets/homework/homework.dart';
 
 class HomeworkScreen extends StatefulWidget {
   final homeworkApi = HomeworkAPI();
-  late final Future<HomeworkItem?> homework;
-  late final String? homeworkName;
+  late final Future<HomeworkItem> homework;
 
-  HomeworkScreen(
-      {Key? key,
-      HomeworkItem? homework,
-      String? homeworkCode,
-      String? homeworkName})
+  HomeworkScreen({Key? key, HomeworkItem? homework, String? homeworkCode})
       : super(key: key) {
-    assert(homework != null || (homeworkCode != null && homeworkName != null));
+    assert(homework != null || homeworkCode != null);
 
-    this.homeworkName = homeworkName;
     this.homework = homework != null
         ? Future.value(homework)
         : homeworkApi.getHomework(homeworkCode!);
@@ -31,20 +25,16 @@ class HomeworkScreen extends StatefulWidget {
 }
 
 class _HomeworkScreenState extends State<HomeworkScreen> {
-  late String homeworkName;
+  String? homeworkName;
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
-    setState(() {
-      this.homeworkName = widget.homeworkName ?? '';
-    });
 
-    if (widget.homeworkName == null) {
-      widget.homework.then((homework) => setState(() {
-            homeworkName = homework!.name;
-          }));
-    }
+    HomeworkItem homework = await widget.homework;
+    setState(() {
+      homeworkName = homework.name;
+    });
   }
 
   @override
@@ -52,7 +42,7 @@ class _HomeworkScreenState extends State<HomeworkScreen> {
     return PlatformScaffold(
       appBar: PlatformAppBar(
         title: Text(
-          homeworkName,
+          homeworkName ?? '',
           style: TextStyle(
             color: Colors.white,
           ),

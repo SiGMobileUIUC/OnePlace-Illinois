@@ -24,8 +24,10 @@ class FeedTab extends StatefulWidget {
 
 class _FeedTabState extends State<FeedTab> {
   static final DateFormat postDateFormatter = DateFormat('h:m a');
-  FeedAPI feedApi = FeedAPI();
+
   List<FeedItem> feedItems = [];
+
+  FeedAPI feedApi = FeedAPI();
 
   @override
   Widget build(BuildContext context) {
@@ -80,15 +82,15 @@ class _FeedTabState extends State<FeedTab> {
                   CupertinoPageRoute(
                     builder: (context) {
                       return SectionView(
-                        sectionName: item.owner,
-                        sectionCode: item.itemCode,
+                        sectionName: item.owner.course,
+                        sectionCode: item.owner.fullCode,
                       );
                     },
                   ),
                 ),
                 child: Text('${item.owner}'),
               ),
-              Text(' posted ${item.name}'),
+              Text(item.action),
               Spacer(),
               Text('${postDateFormatter.format(item.postDate)}',
                   style: TextStyle(color: Colors.grey[700])),
@@ -139,9 +141,11 @@ class _FeedTabState extends State<FeedTab> {
   Widget _getScreenForFeedItem(FeedItem item) {
     switch (item.type) {
       case FeedItemType.Homework:
-        return HomeworkScreen(
-          homeworkCode: item.itemCode,
-          homeworkName: item.name,
+        return HomeworkScreen(homeworkCode: item.itemCode);
+      case FeedItemType.Section:
+        return SectionView(
+          sectionName: item.owner.course,
+          sectionCode: item.owner.fullCode,
         );
       default:
         return throw UnimplementedError(

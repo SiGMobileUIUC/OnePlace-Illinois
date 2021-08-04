@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:oneplace_illinois/src/misc/config.dart';
+import 'package:oneplace_illinois/src/misc/exceptions.dart';
 import 'package:oneplace_illinois/src/models/feedItem.dart';
 import 'package:oneplace_illinois/src/services/api.dart';
 
@@ -16,9 +18,15 @@ class FeedAPI {
       throw HttpException(
           response.reasonPhrase ?? response.statusCode.toString());
     }
+    dynamic data = jsonDecode(response.body);
+    if (data['error'] != null) {
+      log(data.toString());
+      throw ApiException(data['error']);
+    }
 
-    dynamic data = jsonDecode(response.body)['payload'][0];
-    List<FeedItem> feedItems = data.map((elem) => FeedItem.fromJSON(elem));
+    List<FeedItem> feedItems =
+        data['payload'].map((e) => FeedItem.fromJSON(e)).toList();
+    feedItems.sort((a, b) => a.postDate.compareTo(b.postDate));
     return feedItems;
   }
 }
