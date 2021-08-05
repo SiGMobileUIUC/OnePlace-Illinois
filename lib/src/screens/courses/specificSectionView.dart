@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -79,7 +81,8 @@ class _SectionViewState extends State<SectionView> {
         course: course,
       )
     ];
-    List<LectureItem> lectureItems = [
+    LinkedList<LectureItem> lectureItems = LinkedList();
+    lectureItems.addAll([
       LectureItem(
         lectureUrl: "https://mediaspace.illinois.edu/media/t/1_46ekurb1",
         platform: LecturePlatform.MediaSpace,
@@ -88,7 +91,23 @@ class _SectionViewState extends State<SectionView> {
         created: DateTime.now().subtract(Duration(days: 1)),
         author: "Judi Geistlinger",
       ),
-    ];
+      LectureItem(
+        lectureUrl: "https://mediaspace.illinois.edu/media/t/1_vz4b8qa1",
+        platform: LecturePlatform.MediaSpace,
+        title: "Master of Science in Strategic Brand Communication",
+        lectureNumber: 2,
+        created: DateTime.now().subtract(Duration(days: 1)),
+        author: "Kalee Ackerman",
+      ),
+      LectureItem(
+        lectureUrl: "https://mediaspace.illinois.edu/media/t/1_u1jmkwl5",
+        platform: LecturePlatform.MediaSpace,
+        title: "Ch. 9 and 10 - July 28th Lecture",
+        lectureNumber: 28,
+        created: DateTime.now().subtract(Duration(days: 1)),
+        author: "Blake Johnson",
+      ),
+    ]);
 
     return <Widget>[
       ListTile(
@@ -194,7 +213,7 @@ class _SectionViewState extends State<SectionView> {
         thickness: 1.5,
       ),
       LectureList(
-        lectureItems: lectureItems,
+        lectureItems: lectureItems.toList(),
         courseItem: widget.courseItem,
       ),
       SizedBox(

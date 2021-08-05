@@ -1,4 +1,4 @@
-import 'package:oneplace_illinois/src/providers/courseExplorerApi.dart';
+import 'package:oneplace_illinois/src/services/courseExplorerApi.dart';
 
 enum Semester { Fall, Winter, Spring, Summer }
 enum LecturePlatform { MediaSpace, YouTube }

@@ -15,6 +15,7 @@ class HomeworkList extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
       child: ListView.builder(
         shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
         itemCount: homework.length,
         itemBuilder: (BuildContext context, int index) {
           return Card(

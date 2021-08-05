@@ -1,7 +1,9 @@
+import 'dart:collection';
+
 import 'package:oneplace_illinois/src/misc/config.dart';
 import 'package:oneplace_illinois/src/misc/enums.dart';
 
-class LectureItem {
+class LectureItem extends LinkedListEntry<LectureItem> {
   /// URL for the lecture.
   String lectureUrl;
 
@@ -43,5 +45,9 @@ class LectureItem {
     return Config.mediaSpaceThumbnailUrl
         .toString()
         .replaceFirst(r"{thumbnailID}", thumbnailID);
+  }
+
+  String get videoID {
+    return lectureUrl.split("/")[5];
   }
 }
