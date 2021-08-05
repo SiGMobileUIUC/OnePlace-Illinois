@@ -1,16 +1,15 @@
 import 'dart:convert';
 
-import 'package:http/http.dart';
 import 'package:oneplace_illinois/src/misc/config.dart';
 import 'package:oneplace_illinois/src/models/courseItem.dart';
+import 'package:oneplace_illinois/src/services/api.dart';
 
 class CourseAPI {
-  Client client = Client();
-
-  Future<List<CourseItem>?> getCourses(String query, bool onlyCourses) async {
+  Future<List<CourseItem>?> getCourses(
+      ApiService api, String query, bool onlyCourses) async {
     Uri uri = Uri.http(Config.baseEndpoint!, '/api/v1/course/search',
         {"keyword": query, "only_courses": onlyCourses.toString()});
-    final response = await client.get(uri);
+    final response = await api.get(uri);
 
     if (response.statusCode != 200) {
       print(jsonDecode(response.body)['error']);
