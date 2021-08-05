@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
 import 'package:oneplace_illinois/src/misc/config.dart';
-import 'package:oneplace_illinois/src/misc/exception.dart';
+import 'package:oneplace_illinois/src/misc/exceptions.dart';
 import 'package:oneplace_illinois/src/services/firebaseAuth.dart';
 
 class ApiService extends IOClient {

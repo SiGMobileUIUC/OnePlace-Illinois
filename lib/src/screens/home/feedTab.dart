@@ -30,14 +30,19 @@ class _FeedTabState extends State<FeedTab> {
   FeedAPI feedApi = FeedAPI();
 
   @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+  void initState() {
+    super.initState();
     final api = ApiServiceWidget.of(context).api;
     feedApi.getFeed(api).then((feedItems) {
       setState(() {
         this.feedItems = feedItems;
       });
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
 
     return Container(
       width: size.width,

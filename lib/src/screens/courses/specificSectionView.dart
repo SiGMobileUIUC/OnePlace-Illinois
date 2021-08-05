@@ -12,16 +12,18 @@ import 'package:oneplace_illinois/src/models/homeworkItem.dart';
 import 'package:oneplace_illinois/src/models/lectureItem.dart';
 import 'package:oneplace_illinois/src/models/sectionItem.dart';
 import 'package:oneplace_illinois/src/providers/courseApi.dart';
+import 'package:oneplace_illinois/src/providers/homeworkApi.dart';
 import 'package:oneplace_illinois/src/widgets/homework/homeworkList.dart';
 import 'package:oneplace_illinois/src/widgets/lecture/lectureList.dart';
+import 'package:oneplace_illinois/src/widgets/inherited/apiWidget.dart';
 import 'package:oneplace_illinois/src/widgets/sliverView.dart';
 
 class SectionView extends StatefulWidget {
   final CourseAPI _courseAPI = CourseAPI();
   late final String? sectionName;
   late final String? sectionCode;
-  late final Future<SectionItem> section;
-  late final Future<CourseItem> course;
+  late final SectionItem? section;
+  late final CourseItem? course;
 
   SectionView(
       {Key? key,
@@ -35,14 +37,8 @@ class SectionView extends StatefulWidget {
 
     this.sectionName = sectionName ?? '${course!.title} ${section!.sectionID}';
     this.sectionCode = sectionCode;
-    this.section = section != null
-        ? Future.value(section)
-        : _courseAPI.getSection(sectionCode!);
-    this.course = course != null
-        ? Future.value(course)
-        : _courseAPI
-            .getCourses(sectionCode!.split('_')[0])
-            .then((items) => items![0]);
+    this.section = section;
+    this.course = course;
   }
 
   @override
@@ -67,49 +63,31 @@ final CourseItem course = CourseItem(
 
 class _SectionViewState extends State<SectionView> {
   List<HomeworkItem> homework = [];
+  HomeworkAPI homeworkApi = HomeworkAPI();
+  CourseAPI courseApi = CourseAPI();
+  late Future<SectionItem?> section;
+  late Future<CourseItem?> course;
 
   @override
   void initState() {
     super.initState();
-    widget.course.then((_) {
-      setState(() {
-        homework = [
-          HomeworkItem(
-            dueDate: DateTime.now().add(Duration(days: 2)),
-            name: 'Practice Problems #1',
-            description: 'This homework will help prepare you for the test!',
-            assignmentUrl: 'https://example.com',
-            platform: 'turnitin',
-            course: course,
-            files: [
-              File(
-                name: 'Problem set.json',
-                mimeType: 'application/json',
-                size: 400,
-                url: 'https://example.com',
-              ),
-              File(
-                name: 'Problem set.json',
-                mimeType: 'application/json',
-                size: 400,
-                url: 'https://example.com',
-              ),
-              File(
-                name: 'Problem set.json',
-                mimeType: 'application/json',
-                size: 400,
-                url: 'https://example.com',
-              )
-            ],
-          ),
-          HomeworkItem(
-            name: 'Practice Problems #2',
-            dueDate: DateTime.now().add(Duration(days: 7)),
-            assignmentUrl: 'https://en.wikipedia.org/wiki/Hot_air_ballooning',
-            platform: 'turnitin',
-            course: course,
-          )
-        ];
+    var api = ApiServiceWidget.of(context).api;
+
+    setState(() {
+      if (widget.sectionCode != null) {
+        section = courseApi.getSection(api, widget.sectionCode!);
+        course = courseApi
+            .getCourses(api, widget.sectionCode!.split('_')[0])
+            .then((courses) => courses![0]);
+      } else {
+        section = Future.value(widget.section);
+        course = Future.value(widget.course);
+      }
+    });
+
+    course.then((course) {
+      setState(() async {
+        homework = [await homeworkApi.getHomework('code')];
       });
     });
   }
@@ -260,7 +238,7 @@ class _SectionViewState extends State<SectionView> {
   Widget build(BuildContext context) {
     return PlatformScaffold(
       body: FutureBuilder(
-        future: Future.wait([widget.section, widget.course]),
+        future: Future.wait([section, course]),
         initialData: null,
         builder: (context, AsyncSnapshot<List<dynamic>?> snapshot) {
           List<dynamic>? data;

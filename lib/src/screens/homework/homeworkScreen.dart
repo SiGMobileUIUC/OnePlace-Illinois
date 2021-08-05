@@ -8,16 +8,15 @@ import 'package:oneplace_illinois/src/providers/homeworkApi.dart';
 import 'package:oneplace_illinois/src/widgets/homework/homework.dart';
 
 class HomeworkScreen extends StatefulWidget {
-  final homeworkApi = HomeworkAPI();
-  late final Future<HomeworkItem> homework;
+  late final HomeworkItem? homework;
+  late final String? homeworkCode;
 
   HomeworkScreen({Key? key, HomeworkItem? homework, String? homeworkCode})
       : super(key: key) {
     assert(homework != null || homeworkCode != null);
 
-    this.homework = homework != null
-        ? Future.value(homework)
-        : homeworkApi.getHomework(homeworkCode!);
+    this.homework = homework;
+    this.homeworkCode = homeworkCode;
   }
 
   @override
@@ -25,15 +24,19 @@ class HomeworkScreen extends StatefulWidget {
 }
 
 class _HomeworkScreenState extends State<HomeworkScreen> {
+  final homeworkApi = HomeworkAPI();
   String? homeworkName;
+  late Future<HomeworkItem> homework;
 
   @override
   void initState() async {
     super.initState();
 
-    HomeworkItem homework = await widget.homework;
     setState(() {
-      homeworkName = homework.name;
+      homeworkName = widget.homework != null ? widget.homework!.name : '';
+      homework = widget.homework != null
+          ? Future.value(widget.homework)
+          : homeworkApi.getHomework(widget.homeworkCode!);
     });
   }
 
@@ -51,7 +54,7 @@ class _HomeworkScreenState extends State<HomeworkScreen> {
       body: Container(
         padding: EdgeInsets.all(8.0),
         child: FutureBuilder(
-          future: widget.homework,
+          future: homework,
           initialData: null,
           builder: (context, AsyncSnapshot<HomeworkItem?> snapshot) {
             HomeworkItem? data;
