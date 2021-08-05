@@ -99,7 +99,7 @@ class CourseItem implements Comparable {
       courseSectionInformation: json["courseSectionInformation"] ?? null,
       classScheduleInformation: json["classScheduleInformation"] ?? null,
       sections: _getSections(json["sections"]),
-      categories: json["genEd"],
+      categories: List<String>.from(["genEd"]),
     );
     return course;
   }
