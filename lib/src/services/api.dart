@@ -31,14 +31,11 @@ class ApiService extends IOClient {
     return super.send(request);
   }
 
-  Future<void> _login() async {
-    if (_firebaseAuth.user == null) {
-      throw ApiException(
-          'Firebase user must exist before logging into the API.');
-    }
+  Future<void> login() async {
+    var user = await _firebaseAuth.userStream.first;
 
     Response response = await get(_loginUri, headers: {
-      'Authorization': await _firebaseAuth.user!.getIdToken(),
+      'Authorization': await user!.getIdToken(),
     });
 
     var cookies = response.headers['set-cookie']!;

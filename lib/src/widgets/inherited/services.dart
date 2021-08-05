@@ -5,12 +5,14 @@ import 'package:oneplace_illinois/src/widgets/inherited/apiWidget.dart';
 import 'package:oneplace_illinois/src/widgets/inherited/firebaseAuthWidget.dart';
 
 class Services extends StatelessWidget {
-  final ApiService api;
-  final FirebaseAuthService firebaseAuth;
+  final FirebaseAuthService firebaseAuth = FirebaseAuthService();
+  late final ApiService api;
   final Widget child;
 
-  Services(
-      {required this.api, required this.firebaseAuth, required this.child});
+  Services({required this.child}) {
+    api = ApiService(firebaseAuth: firebaseAuth);
+    api.login();
+  }
 
   @override
   Widget build(BuildContext context) {
