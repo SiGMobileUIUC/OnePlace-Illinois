@@ -8,7 +8,7 @@ class FirebaseAuthWidget extends InheritedWidget {
       : super(child: child);
 
   @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) => true;
 
   static FirebaseAuthWidget? of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<FirebaseAuthWidget>();

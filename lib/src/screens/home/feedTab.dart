@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
+import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/models/feedItem.dart';
 import 'package:oneplace_illinois/src/models/sectionItem.dart';
 import 'package:oneplace_illinois/src/providers/feedApi.dart';
@@ -25,13 +27,13 @@ class FeedTab extends StatefulWidget {
 class _FeedTabState extends State<FeedTab> {
   static final DateFormat postDateFormatter = DateFormat('h:m a');
 
-  List<FeedItem> feedItems = [];
+  List<FeedItem>? feedItems;
 
   FeedAPI feedApi = FeedAPI();
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     final api = ApiServiceWidget.of(context).api;
     feedApi.getFeed(api).then((feedItems) {
       setState(() {
@@ -47,10 +49,14 @@ class _FeedTabState extends State<FeedTab> {
     return Container(
       width: size.width,
       height: size.height,
-      child: ListView.builder(
-        itemCount: feedItems.length,
-        itemBuilder: (context, i) => _buildItem(context, feedItems[i]),
-      ),
+      child: feedItems == null
+          ? Center(
+              child: SpinKitRing(color: AppColors.secondaryUofILightest),
+            )
+          : ListView.builder(
+              itemCount: feedItems!.length,
+              itemBuilder: (context, i) => _buildItem(context, feedItems![i]),
+            ),
     );
   }
 
@@ -62,7 +68,7 @@ class _FeedTabState extends State<FeedTab> {
             ? Colors.grey[900]
             : Colors.grey[300],
         child: InkWell(
-          onTap: () => Navigator.of(context, rootNavigator: true).push(
+          onTap: () => Navigator.of(context).push(
             CupertinoPageRoute(
               builder: (context) {
                 return _getScreenForFeedItem(item);
@@ -83,7 +89,7 @@ class _FeedTabState extends State<FeedTab> {
           Row(
             children: [
               InkWell(
-                onTap: () => Navigator.of(context, rootNavigator: true).push(
+                onTap: () => Navigator.of(context).push(
                   CupertinoPageRoute(
                     builder: (context) {
                       return SectionView(
@@ -93,7 +99,7 @@ class _FeedTabState extends State<FeedTab> {
                     },
                   ),
                 ),
-                child: Text('${item.owner}'),
+                child: Text('${item.owner.course} '),
               ),
               Text(item.action),
               Spacer(),

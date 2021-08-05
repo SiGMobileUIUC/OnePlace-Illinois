@@ -69,15 +69,18 @@ class _SectionViewState extends State<SectionView> {
   late Future<CourseItem?> course;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     var api = ApiServiceWidget.of(context).api;
 
     setState(() {
       if (widget.sectionCode != null) {
         section = courseApi.getSection(api, widget.sectionCode!);
+        var courseKeyword = widget.sectionCode!.split('_')[0];
+        courseKeyword =
+            '${courseKeyword.substring(0, 2)} ${courseKeyword.substring(2)}';
         course = courseApi
-            .getCourses(api, widget.sectionCode!.split('_')[0])
+            .getCourses(api, courseKeyword)
             .then((courses) => courses![0]);
       } else {
         section = Future.value(widget.section);

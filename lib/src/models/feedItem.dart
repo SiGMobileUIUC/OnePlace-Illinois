@@ -51,11 +51,11 @@ class FeedItem {
   });
 
   factory FeedItem.fromJSON(Map<String, dynamic> json) {
-    dynamic feedItem = FeedItem(
+    FeedItem feedItem = FeedItem(
       owner: SectionItem.fromJSON(json['Section']),
       body: json['body'],
       postDate: DateTime.parse(json['createdAt']),
-      type: FeedItemTypeExtension.fromIndex(int.parse(json['type']))!,
+      type: FeedItemTypeExtension.fromIndex(json['type'])!,
       action: json['action'],
       itemCode: json['item_id'],
       attachmentUrl: json['attachment_url'],

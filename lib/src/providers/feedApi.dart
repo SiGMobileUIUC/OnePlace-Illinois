@@ -18,14 +18,14 @@ class FeedAPI {
       throw HttpException(
           response.reasonPhrase ?? response.statusCode.toString());
     }
-    dynamic data = jsonDecode(response.body);
+    Map<String, dynamic> data = jsonDecode(response.body);
     if (data['error'] != null) {
       log(data.toString());
       throw ApiException(data['error']);
     }
 
     List<FeedItem> feedItems =
-        data['payload'].map((e) => FeedItem.fromJSON(e)).toList();
+        data['payload'].map<FeedItem>((e) => FeedItem.fromJSON(e)).toList();
     feedItems.sort((a, b) => a.postDate.compareTo(b.postDate));
     return feedItems;
   }

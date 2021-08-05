@@ -7,7 +7,7 @@ class ApiServiceWidget extends InheritedWidget {
   ApiServiceWidget({required this.api, required child}) : super(child: child);
 
   @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) => true;
 
   static ApiServiceWidget of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<ApiServiceWidget>()!;

@@ -18,7 +18,7 @@ class CourseAPI {
       throw HttpException(
           response.reasonPhrase ?? response.statusCode.toString());
     }
-    List<dynamic> data = jsonDecode(response.body)['courses'];
+    List<dynamic> data = jsonDecode(response.body)['payload']['courses'];
     List<CourseItem> courses =
         data.map((e) => CourseItem.fromJSON(e, onlyCourses)).toList();
     courses.sort((a, b) => a.compareTo([query, b]));
@@ -38,7 +38,7 @@ class CourseAPI {
           response.reasonPhrase ?? response.statusCode.toString());
     }
 
-    dynamic data = jsonDecode(response.body)['sections'][0];
+    dynamic data = jsonDecode(response.body)['payload']['sections'][0];
     SectionItem section = SectionItem.fromJSON(data);
     return section;
   }

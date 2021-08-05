@@ -89,7 +89,7 @@ class CourseItem implements Comparable {
     dynamic course = CourseItem(
       year: json["year"],
       semester: _sem.fromString(json["semester"]),
-      semesterID: json["semesterID"],
+      semesterID: json["semesterID"].toString(),
       subject: json["subject"],
       subjectID: json["subjectId"],
       courseID: json["courseId"],
@@ -99,7 +99,7 @@ class CourseItem implements Comparable {
       courseSectionInformation: json["courseSectionInformation"] ?? null,
       classScheduleInformation: json["classScheduleInformation"] ?? null,
       sections: _getSections(json["sections"]),
-      categories: [json["genEd"]],
+      categories: json["genEd"],
     );
     return course;
   }

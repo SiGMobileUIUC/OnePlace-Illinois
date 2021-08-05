@@ -11,7 +11,6 @@ class Services extends StatelessWidget {
 
   Services({required this.child}) {
     api = ApiService(firebaseAuth: firebaseAuth);
-    api.login();
   }
 
   @override
