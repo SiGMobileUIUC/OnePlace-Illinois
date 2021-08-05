@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +63,7 @@ final CourseItem course = CourseItem(
 );
 
 class _SectionViewState extends State<SectionView> {
-  List<HomeworkItem> homework = [];
+  List<HomeworkItem>? homework;
   HomeworkAPI homeworkApi = HomeworkAPI();
   CourseAPI courseApi = CourseAPI();
   late Future<SectionItem?> section;
@@ -73,24 +74,28 @@ class _SectionViewState extends State<SectionView> {
     super.didChangeDependencies();
     var api = ApiServiceWidget.of(context).api;
 
-    setState(() {
-      if (widget.sectionCode != null) {
+    if (widget.sectionCode != null) {
+      var courseKeyword = widget.sectionCode!.split('_')[0];
+      courseKeyword =
+          '${courseKeyword.substring(0, 2)} ${courseKeyword.substring(2)}';
+      setState(() {
         section = courseApi.getSection(api, widget.sectionCode!);
-        var courseKeyword = widget.sectionCode!.split('_')[0];
-        courseKeyword =
-            '${courseKeyword.substring(0, 2)} ${courseKeyword.substring(2)}';
         course = courseApi
             .getCourses(api, courseKeyword)
             .then((courses) => courses![0]);
-      } else {
+      });
+    } else {
+      setState(() {
         section = Future.value(widget.section);
         course = Future.value(widget.course);
-      }
-    });
+      });
+    }
 
-    course.then((course) {
-      setState(() async {
-        homework = [await homeworkApi.getHomework('code')];
+    course.then((course) async {
+      var homework = await homeworkApi.getHomework('code');
+
+      setState(() {
+        this.homework = [homework];
       });
     });
   }
@@ -218,9 +223,11 @@ class _SectionViewState extends State<SectionView> {
         indent: 25.0,
         thickness: 1.5,
       ),
-      HomeworkList(
-        homework: homework,
-      ),
+      homework == null
+          ? SpinKitRing(color: AppColors.secondaryUofILightest)
+          : HomeworkList(
+              homework: homework!,
+            ),
       Divider(
         // color: Colors.grey[500],
         endIndent: 25.0,

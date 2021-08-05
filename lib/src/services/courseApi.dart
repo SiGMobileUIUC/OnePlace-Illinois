@@ -27,10 +27,10 @@ class CourseAPI {
 
   Future<SectionItem> getSection(ApiService api, String fullCode) async {
     List<String> codeSections = fullCode.split('_');
-    String code = codeSections[0] + codeSections[1];
-    int crn = int.parse(codeSections[2]);
+    String code = codeSections[0];
+    String crn = codeSections[1];
     Uri uri = Uri.http(Config.baseEndpoint!, '/api/v1/section/search',
-        {'code': code, 'CRN': crn.toString()});
+        {'code': code, 'CRN': crn});
 
     final response = await api.get(uri);
     if (response.statusCode != 200) {

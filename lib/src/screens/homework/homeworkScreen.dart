@@ -29,7 +29,7 @@ class _HomeworkScreenState extends State<HomeworkScreen> {
   late Future<HomeworkItem> homework;
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
 
     setState(() {
