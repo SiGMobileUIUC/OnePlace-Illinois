@@ -9,6 +9,7 @@ import 'package:oneplace_illinois/src/models/courseItem.dart';
 import 'package:oneplace_illinois/src/providers/courseApi.dart';
 import 'package:oneplace_illinois/src/screens/courses/specificCourseView.dart';
 import 'package:oneplace_illinois/src/widgets/alertBox.dart';
+import 'package:oneplace_illinois/src/widgets/inherited/apiWidget.dart';
 
 class Search extends SearchDelegate<CourseItem> {
   List<CourseItem>? _courses = [];
@@ -74,8 +75,9 @@ class Search extends SearchDelegate<CourseItem> {
     );
   }
 
-  _getCourses() {
-    return _courseAPI.getCourses(query, false);
+  _getCourses(BuildContext context) {
+    var api = ApiServiceWidget.of(context).api;
+    return _courseAPI.getCourses(api, query, false);
   }
 
   /* Future<CourseItem?> _getCourse(CourseListItem courseListItem) async {
@@ -87,7 +89,7 @@ class Search extends SearchDelegate<CourseItem> {
   Widget buildResults(BuildContext context) {
     return Container(
       child: FutureBuilder(
-          future: _getCourses(),
+          future: _getCourses(context),
           builder: (BuildContext context,
               AsyncSnapshot<List<CourseItem>?> snapshot) {
             switch (snapshot.connectionState) {

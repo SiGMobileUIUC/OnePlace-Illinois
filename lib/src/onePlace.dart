@@ -9,7 +9,9 @@ import 'package:oneplace_illinois/src/screens/home/libraryTab.dart';
 import 'package:oneplace_illinois/src/screens/home/search.dart';
 import 'package:oneplace_illinois/src/screens/settingsDrawer.dart';
 import 'package:oneplace_illinois/src/screens/login/splashScreen.dart';
+import 'package:oneplace_illinois/src/services/api.dart';
 import 'package:oneplace_illinois/src/services/firebaseAuth.dart';
+import 'package:oneplace_illinois/src/widgets/inherited/services.dart';
 import 'package:oneplace_illinois/src/widgets/sliverView.dart';
 import 'package:provider/provider.dart';
 
@@ -25,6 +27,13 @@ class OnePlace extends StatefulWidget {
 }
 
 class _OnePlaceState extends State<OnePlace> {
+  final FirebaseAuthService firebaseAuth = FirebaseAuthService();
+  late final ApiService api;
+
+  _OnePlaceState() {
+    api = ApiService(firebaseAuth: firebaseAuth);
+  }
+
   @override
   Widget build(BuildContext context) {
     final darkTheme = CupertinoThemeData(
@@ -58,7 +67,11 @@ class _OnePlaceState extends State<OnePlace> {
         home: StreamProvider<User?>.value(
           value: FirebaseAuthService().userStream,
           initialData: FirebaseAuthService().user,
-          child: SplashScreen(),
+          child: Services(
+            api: api,
+            firebaseAuth: firebaseAuth,
+            child: SplashScreen(),
+          ),
         ),
         material: (_, __) => MaterialAppData(
           theme: ThemeData(
