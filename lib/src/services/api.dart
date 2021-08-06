@@ -97,7 +97,7 @@ class ApiService {
 
         // Save access token if new one is issued from the server
         if (data['payload'] && data['payload']['accessToken']) {
-          await storage.write(key: 'jwt_access', value: _accessToken);
+          await storage.write(key: 'jwt_access', value: data['payload']['accessToken']);
         }
 
         // return response;
