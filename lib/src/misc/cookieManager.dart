@@ -22,7 +22,7 @@ class CookieManager extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    cookieJar.loadForRequest(options.baseUrl).then((cookies) {
+    cookieJar.loadForRequest(options.uri).then((cookies) {
       var cookie = getCookies(cookies);
       if (cookie.isNotEmpty) {
         options.headers[HttpHeaders.cookieHeader] = cookie;
@@ -69,7 +69,7 @@ class CookieManager extends Interceptor {
 
     if (cookies != null) {
       await cookieJar.saveFromResponse(
-        response.requestOptions.baseUrl,
+        response.requestOptions.uri,
         cookies.map((str) => Cookie.fromSetCookieValue(str)).toList(),
       );
     }

@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+//import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:oneplace_illinois/src/misc/config.dart';
 import 'package:oneplace_illinois/src/misc/exceptions.dart';
@@ -13,12 +13,10 @@ import 'package:oneplace_illinois/src/services/firebaseAuth.dart';
 
 class ApiService {
   // NOTE: Signed cookie doesn't work with HTTP request. Only works with HTTPS.
-  static final _baseUrl = Uri.https(Config.baseEndpoint!);
+  static final _baseUrl = Uri.https(Config.baseEndpoint!, '');
 
-  final Directory appDocDir = await getApplicationDocumentsDirectory();
-  String appDocPath = appDocDir.path;
-
-  static PersistCookieJar _cookieJar;
+  static PersistCookieJar _cookieJar = new PersistCookieJar(ignoreExpires: false);
+  /* // use default settings for now
   static Future<PersistCookieJar> get cookieJar async {
     if (_cookieJar == null) {
       Directory appDocDir = await getApplicationDocumentsDirectory();
@@ -30,6 +28,7 @@ class ApiService {
     }
     return _cookieJar;
   }
+  */
 
   final storage = new FlutterSecureStorage(); // for storing access token
 
@@ -38,14 +37,7 @@ class ApiService {
   ApiService({required firebaseAuth}) : this._firebaseAuth = firebaseAuth;
 
 
-  Future<String> _getCookieDirectory async {
-    final Directory appDocDir = await getApplicationDocumentsDirectory();
-    String appDocPath = appDocDir.path;
-    return appDocPath + '/.cookies/';
-  }
-
-
-  Future<Dio> _getClient() async {
+  Dio _getClient() async {
     final Dio _dio = Dio();
 
     _dio.options.baseUrl = _baseUrl + '/api/v1';
@@ -53,19 +45,20 @@ class ApiService {
 
     _dio.interceptors.add(InterceptorsWrapper(
       onResponse: (Response response) {
+        var data = response.data;
+
         if (data['error'] != null) {
           log(data.toString());
           throw ApiException(data['error']);
         }
 
-        Map<String, dynamic> data = jsonDecode(response.body);
-
         // save access token (refresh token is auto-saved by CookieManager above)
-        if (data['payload'] && data['payload']['accessToken']) {
+        var _accessToken = (tmp = data["payload"]) == null ? null : tmp["accessToken"];
+        if (_accessToken) {
           await storage.write(key: 'jwt_access', value: _accessToken);
         }
 
-        handler.resolve(data);
+        return data;
       },
     ));
 
@@ -74,7 +67,7 @@ class ApiService {
 
   Future<Dio> _getClientWithAuth() async {
     // retrieve access token
-    String _accessToken = await storage.read(key: 'jwt_access');
+    String? _accessToken = await storage.read(key: 'jwt_access');
 
     if (_accessToken == null) {
       // interceptor from _getClient() used by _login() will auto-save
@@ -96,8 +89,8 @@ class ApiService {
         options.headers['Authorization'] = 'Bearer ' + _accessToken;
         handler.next(options);
       },
-      onResponse: (Response response, handler) {
-        Map<String, dynamic> data = jsonDecode(response.body);
+      onResponse: (Response response, handler) async {
+        var data = response.data;
 
         if (data['error'] != null) {
           log(data.toString());
@@ -110,7 +103,7 @@ class ApiService {
         }
 
         // return response;
-        handler.resolve(data);
+        return data;
       }, onError: (DioError error) async {
         // Catch response error
         /*
@@ -129,7 +122,7 @@ class ApiService {
         } else {
           return error;
         }*/
-        throw HttpException(response.reasonPhrase ?? response.statusCode.toString());
+        throw HttpException(error.response?.reasonPhrase ?? error.response?.statusCode.toString());
     }));
     return _dio;
   }

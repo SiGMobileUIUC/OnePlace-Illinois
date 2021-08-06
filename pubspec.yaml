@@ -51,7 +51,8 @@ dependencies:
   tuple: ^2.0.0
   dio: ^4.0.0
   cookie_jar: ^3.0.1
-
+    #dio_cookie_manager: ^1.0.0 # depends on dio: ^3.0.0
+  flutter_secure_storage: ^4.2.1
 
 dev_dependencies:
   flutter_test:
