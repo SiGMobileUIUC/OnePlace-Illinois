@@ -68,7 +68,7 @@ class _FeedTabState extends State<FeedTab> {
             ? Colors.grey[900]
             : Colors.grey[300],
         child: InkWell(
-          onTap: () => Navigator.of(context).push(
+          onTap: () => Navigator.of(context, rootNavigator: true).push(
             CupertinoPageRoute(
               builder: (context) {
                 return _getScreenForFeedItem(item);
@@ -89,7 +89,7 @@ class _FeedTabState extends State<FeedTab> {
           Row(
             children: [
               InkWell(
-                onTap: () => Navigator.of(context).push(
+                onTap: () => Navigator.of(context, rootNavigator: true).push(
                   CupertinoPageRoute(
                     builder: (context) {
                       return SectionView(
