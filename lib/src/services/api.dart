@@ -52,9 +52,6 @@ class ApiService {
     _dio.interceptors.clear();
 
     _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (RequestOptions options){
-        return options;
-      },
       onResponse: (Response response) {
         if (data['error'] != null) {
           log(data.toString());
@@ -68,11 +65,8 @@ class ApiService {
           await storage.write(key: 'jwt_access', value: _accessToken);
         }
 
-        return data;
+        handler.resolve(data);
       },
-      onError: (DioError e) {
-        return e;
-      }
     ));
 
     return _dio;
@@ -97,12 +91,12 @@ class ApiService {
     _dio.interceptors.add(CookieManager(_cookieJar));
 
     _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (RequestOptions options) {
+      onRequest: (RequestOptions options, handler) {
         // Add access token to interceptor
         options.headers['Authorization'] = 'Bearer ' + _accessToken;
-        return options;
+        handler.next(options);
       },
-      onResponse: (Response response) {
+      onResponse: (Response response, handler) {
         Map<String, dynamic> data = jsonDecode(response.body);
 
         if (data['error'] != null) {
@@ -116,7 +110,7 @@ class ApiService {
         }
 
         // return response;
-        return data;
+        handler.resolve(data);
       }, onError: (DioError error) async {
         // Catch response error
         /*
