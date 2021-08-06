@@ -33,7 +33,7 @@ class ApiService {
   Future<Dio> _getClient() async {
     final Dio _dio = Dio();
 
-    _dio.options.baseUrl = _baseUrl;
+    _dio.options.baseUrl = _baseUrl + '/api/v1';
     _dio.interceptors.clear();
 
     _dio.interceptors.add(InterceptorsWrapper(
@@ -75,7 +75,7 @@ class ApiService {
 
     final Dio _dio = Dio();
 
-    _dio.options.baseUrl = _baseUrl;
+    _dio.options.baseUrl = _baseUrl + '/api/v1';
     _dio.interceptors.clear();
 
     // Add cookie (refresh token) to interceptor
