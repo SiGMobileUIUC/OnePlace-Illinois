@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:oneplace_illinois/src/misc/config.dart';
 import 'package:oneplace_illinois/src/misc/exceptions.dart';
 import 'package:oneplace_illinois/src/models/feedItem.dart';
@@ -13,17 +14,10 @@ class FeedAPI {
   Future<List<FeedItem>> getFeed(ApiService api) async {
     Uri uri = Uri.http(Config.baseEndpoint!, feedListPath);
 
-    final response = await api.get(uri);
-    if (response.statusCode != 200) {
-      throw HttpException(
-          response.reasonPhrase ?? response.statusCode.toString());
-    }
-    Map<String, dynamic> data = jsonDecode(response.body);
-    if (data['error'] != null) {
-      log(data.toString());
-      throw ApiException(data['error']);
-    }
+    final client = api._getClientWithAuth();
+    final data = await client.get('/feed/list', queryParameters: {}); // qs for later
 
+    // NOTE: Does this catch case of empty feed list?
     List<FeedItem> feedItems =
         data['payload'].map<FeedItem>((e) => FeedItem.fromJSON(e)).toList();
     feedItems.sort((a, b) => a.postDate.compareTo(b.postDate));

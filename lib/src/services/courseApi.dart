@@ -10,15 +10,15 @@ import 'package:oneplace_illinois/src/services/api.dart';
 class CourseAPI {
   Future<List<CourseItem>?> getCourses(ApiService api, String query,
       {bool onlyCourses = false}) async {
-    Uri uri = Uri.http(Config.baseEndpoint!, '/api/v1/course/search',
-        {"keyword": query, "only_courses": onlyCourses.toString()});
-    final response = await api.get(uri);
 
-    if (response.statusCode != 200) {
-      throw HttpException(
-          response.reasonPhrase ?? response.statusCode.toString());
-    }
-    List<dynamic> data = jsonDecode(response.body)['payload']['courses'];
+    Dio client = api._getClient();
+
+    // NOTE: only_courses accept boolean (prev was onlyCourses.toString())
+    final body = client.get('/course/search', queryParameters: {
+      'keyword': query, 'only_courses': onlyCourses
+    });
+
+    List<dynamic> data = body['courses']; 
     List<CourseItem> courses =
         data.map((e) => CourseItem.fromJSON(e, onlyCourses)).toList();
     courses.sort((a, b) => a.compareTo([query, b]));
@@ -29,16 +29,15 @@ class CourseAPI {
     List<String> codeSections = fullCode.split('_');
     String code = codeSections[0];
     String crn = codeSections[1];
-    Uri uri = Uri.http(Config.baseEndpoint!, '/api/v1/section/search',
-        {'code': code, 'CRN': crn});
 
-    final response = await api.get(uri);
-    if (response.statusCode != 200) {
-      throw HttpException(
-          response.reasonPhrase ?? response.statusCode.toString());
-    }
+    Dio client = api._getClient();
 
-    dynamic data = jsonDecode(response.body)['payload']['sections'][0];
+    final body = client.get('/section/search', queryParameters: {
+      'code': code, 'CRN': crn,
+    });
+
+    // Since we provided CRN, only one section is returned
+    dynamic data = body['sections'][0];
     SectionItem section = SectionItem.fromJSON(data);
     return section;
   }
