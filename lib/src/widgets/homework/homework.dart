@@ -41,7 +41,7 @@ class HomeworkItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
+      children: <Widget>[
         ListTile(
           contentPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
           isThreeLine: true,

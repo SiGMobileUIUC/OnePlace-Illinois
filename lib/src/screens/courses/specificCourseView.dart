@@ -182,7 +182,18 @@ class _CourseViewState extends State<CourseView> {
         indent: 25.0,
         thickness: 1.5,
       ),
-      buildSections(course),
+      Container(
+        padding: EdgeInsets.only(top: 10.0),
+        child: Text(
+          "Sections:",
+          style: Theme.of(context).textTheme.headline6!.copyWith(
+                // color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0,
+              ),
+        ),
+      ),
+      _buildSections(course),
       SizedBox(
         height: MediaQuery.of(context).size.height / 3,
       ),
@@ -241,7 +252,7 @@ class _CourseViewState extends State<CourseView> {
     return SizedBox();
   }
 
-  Widget buildSections(CourseItem courseItem) {
+  Widget _buildSections(CourseItem courseItem) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
       child: ListView.builder(
@@ -269,40 +280,14 @@ class _CourseViewState extends State<CourseView> {
               contentPadding:
                   EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
               isThreeLine: true,
-              title: index == 0
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.only(bottom: 10.0),
-                          child: Text("Sections:",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline6!
-                                  .copyWith(
-                                      // color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20.0)),
-                        ),
-                        Text(
-                          courseItem.sections[index].sectionNumber,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            // color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20.0,
-                          ),
-                        ),
-                      ],
-                    )
-                  : Text(
-                      courseItem.sections[index].sectionNumber,
-                      style: TextStyle(
-                        // color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20.0,
-                      ),
-                    ),
+              title: Text(
+                courseItem.sections[index].sectionNumber,
+                style: TextStyle(
+                  // color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0,
+                ),
+              ),
               subtitle: Container(
                 padding: EdgeInsets.only(top: 2.0),
                 child: Column(

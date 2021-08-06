@@ -1,6 +1,29 @@
-import 'package:oneplace_illinois/src/providers/courseExplorerApi.dart';
+import 'package:oneplace_illinois/src/services/courseExplorerApi.dart';
 
 enum Semester { Fall, Winter, Spring, Summer }
+enum LecturePlatform { MediaSpace, YouTube }
+
+class LecturePlatforms {
+  LecturePlatform fromString(String platform) {
+    switch (platform) {
+      case "mediaspace":
+        return LecturePlatform.MediaSpace;
+      case "youtube":
+        return LecturePlatform.YouTube;
+      default:
+        return LecturePlatform.MediaSpace;
+    }
+  }
+
+  String toStr(LecturePlatform platform) {
+    switch (platform) {
+      case LecturePlatform.MediaSpace:
+        return "mediaspace";
+      case LecturePlatform.YouTube:
+        return "youtube";
+    }
+  }
+}
 
 class Semesters {
   CourseExplorerApi _api = CourseExplorerApi();
@@ -14,6 +37,8 @@ class Semesters {
         return "Spring";
       case Semester.Summer:
         return "Summer";
+      default:
+        return _api.getSemester(DateTime.now()).toString();
     }
   }
 
@@ -27,7 +52,8 @@ class Semesters {
         return Semester.Spring;
       case "summer":
         return Semester.Summer;
+      default:
+        return fromString(_api.getSemester(DateTime.now()).toString());
     }
-    return fromString(_api.getSemester(DateTime.now()).toString());
   }
 }

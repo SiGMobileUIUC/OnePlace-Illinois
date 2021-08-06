@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -5,8 +7,10 @@ import 'package:oneplace_illinois/src/misc/enums.dart';
 import 'package:oneplace_illinois/src/models/courseItem.dart';
 import 'package:oneplace_illinois/src/models/file.dart';
 import 'package:oneplace_illinois/src/models/homeworkItem.dart';
+import 'package:oneplace_illinois/src/models/lectureItem.dart';
 import 'package:oneplace_illinois/src/models/sectionItem.dart';
 import 'package:oneplace_illinois/src/widgets/homework/homeworkList.dart';
+import 'package:oneplace_illinois/src/widgets/lecture/lectureList.dart';
 import 'package:oneplace_illinois/src/widgets/sliverView.dart';
 
 class SectionView extends StatefulWidget {
@@ -77,6 +81,33 @@ class _SectionViewState extends State<SectionView> {
         course: course,
       )
     ];
+    LinkedList<LectureItem> lectureItems = LinkedList();
+    lectureItems.addAll([
+      LectureItem(
+        lectureUrl: "https://mediaspace.illinois.edu/media/t/1_46ekurb1",
+        platform: LecturePlatform.MediaSpace,
+        title: "Illustrator Getting Started",
+        lectureNumber: 1,
+        created: DateTime.now().subtract(Duration(days: 1)),
+        author: "Judi Geistlinger",
+      ),
+      LectureItem(
+        lectureUrl: "https://mediaspace.illinois.edu/media/t/1_vz4b8qa1",
+        platform: LecturePlatform.MediaSpace,
+        title: "Master of Science in Strategic Brand Communication",
+        lectureNumber: 2,
+        created: DateTime.now().subtract(Duration(days: 1)),
+        author: "Kalee Ackerman",
+      ),
+      LectureItem(
+        lectureUrl: "https://mediaspace.illinois.edu/media/t/1_u1jmkwl5",
+        platform: LecturePlatform.MediaSpace,
+        title: "Ch. 9 and 10 - July 28th Lecture",
+        lectureNumber: 28,
+        created: DateTime.now().subtract(Duration(days: 1)),
+        author: "Blake Johnson",
+      ),
+    ]);
 
     return <Widget>[
       ListTile(
@@ -174,6 +205,16 @@ class _SectionViewState extends State<SectionView> {
       ),
       HomeworkList(
         homework: homework,
+      ),
+      Divider(
+        // color: Colors.grey[500],
+        endIndent: 25.0,
+        indent: 25.0,
+        thickness: 1.5,
+      ),
+      LectureList(
+        lectureItems: lectureItems.toList(),
+        courseItem: widget.courseItem,
       ),
       SizedBox(
         height: MediaQuery.of(context).size.height / 3,

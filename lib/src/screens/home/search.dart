@@ -6,7 +6,7 @@ import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/misc/enums.dart';
 import 'package:oneplace_illinois/src/models/courseItem.dart';
 
-import 'package:oneplace_illinois/src/providers/courseApi.dart';
+import 'package:oneplace_illinois/src/services/courseApi.dart';
 import 'package:oneplace_illinois/src/screens/courses/specificCourseView.dart';
 import 'package:oneplace_illinois/src/widgets/alertBox.dart';
 

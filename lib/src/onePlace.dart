@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
+import 'package:oneplace_illinois/src/providers/mediSpaceFileProvider.dart';
+import 'package:oneplace_illinois/src/providers/mediaSpaceDownloadProvider.dart';
 import 'package:oneplace_illinois/src/screens/home/addItemTab.dart';
 import 'package:oneplace_illinois/src/screens/home/feedTab.dart';
 import 'package:oneplace_illinois/src/screens/home/libraryTab.dart';
@@ -10,6 +12,7 @@ import 'package:oneplace_illinois/src/screens/home/search.dart';
 import 'package:oneplace_illinois/src/screens/settingsDrawer.dart';
 import 'package:oneplace_illinois/src/screens/login/splashScreen.dart';
 import 'package:oneplace_illinois/src/services/firebaseAuth.dart';
+import 'package:oneplace_illinois/src/providers/mediaSpaceDownload.dart';
 import 'package:oneplace_illinois/src/widgets/sliverView.dart';
 import 'package:provider/provider.dart';
 
@@ -25,6 +28,11 @@ class OnePlace extends StatefulWidget {
 }
 
 class _OnePlaceState extends State<OnePlace> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final darkTheme = CupertinoThemeData(
@@ -45,58 +53,71 @@ class _OnePlaceState extends State<OnePlace> {
       providers: [
       ],
       child: */
-    return PlatformProvider(
-      settings: PlatformSettingsData(iosUsesMaterialWidgets: true),
-      builder: (context) => PlatformApp(
-        debugShowCheckedModeBanner: false,
-        localizationsDelegates: <LocalizationsDelegate<dynamic>>[
-          DefaultMaterialLocalizations.delegate,
-          DefaultWidgetsLocalizations.delegate,
-          DefaultCupertinoLocalizations.delegate,
-        ],
-        title: "One Place",
-        home: StreamProvider<User?>.value(
-          value: FirebaseAuthService().userStream,
-          initialData: FirebaseAuthService().user,
-          child: SplashScreen(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<MSDownload>(
+          create: (context) => MSDownload(),
         ),
-        material: (_, __) => MaterialAppData(
-          theme: ThemeData(
-            brightness: Brightness.light,
-            scaffoldBackgroundColor: Colors.white,
-            canvasColor: Colors.white,
-            inputDecorationTheme: InputDecorationTheme(
-              hintStyle: TextStyle(color: Colors.white),
-            ),
-            backgroundColor: Colors.white,
-            colorScheme: ColorScheme.light(),
-            appBarTheme: AppBarTheme(
-              backgroundColor: AppColors.secondaryUofILight,
-              actionsIconTheme: IconThemeData(color: Colors.white),
-              iconTheme: IconThemeData(color: Colors.white),
-            ),
-          ),
-          darkTheme: ThemeData(
-            brightness: Brightness.dark,
-            scaffoldBackgroundColor: Colors.black,
-            backgroundColor: Colors.black,
-            colorScheme: ColorScheme.dark(),
-            canvasColor: Colors.black,
-            inputDecorationTheme: InputDecorationTheme(
-              hintStyle: TextStyle(color: Colors.white),
-            ),
-            appBarTheme: AppBarTheme(
-              backgroundColor: AppColors.primaryUofI,
-              actionsIconTheme: IconThemeData(color: Colors.white),
-              iconTheme: IconThemeData(color: Colors.white),
-            ),
-          ),
-          themeMode: ThemeMode.system,
+        ChangeNotifierProvider<MSDownloadProvider>(
+          create: (context) => MSDownloadProvider(),
         ),
-        cupertino: (_, __) => CupertinoAppData(
-          theme: MediaQuery.of(context).platformBrightness == Brightness.light
-              ? lightTheme
-              : darkTheme,
+        ChangeNotifierProvider<MSVideoFileProvider>(
+          create: (context) => MSVideoFileProvider(),
+        ),
+      ],
+      child: PlatformProvider(
+        settings: PlatformSettingsData(iosUsesMaterialWidgets: true),
+        builder: (context) => PlatformApp(
+          debugShowCheckedModeBanner: false,
+          localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+            DefaultMaterialLocalizations.delegate,
+            DefaultWidgetsLocalizations.delegate,
+            DefaultCupertinoLocalizations.delegate,
+          ],
+          title: "One Place",
+          home: StreamProvider<User?>.value(
+            value: FirebaseAuthService().userStream,
+            initialData: FirebaseAuthService().user,
+            child: SplashScreen(),
+          ),
+          material: (_, __) => MaterialAppData(
+            theme: ThemeData(
+              brightness: Brightness.light,
+              scaffoldBackgroundColor: Colors.white,
+              canvasColor: Colors.white,
+              inputDecorationTheme: InputDecorationTheme(
+                hintStyle: TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.white,
+              colorScheme: ColorScheme.light(),
+              appBarTheme: AppBarTheme(
+                backgroundColor: AppColors.secondaryUofILight,
+                actionsIconTheme: IconThemeData(color: Colors.white),
+                iconTheme: IconThemeData(color: Colors.white),
+              ),
+            ),
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+              scaffoldBackgroundColor: Colors.black,
+              backgroundColor: Colors.black,
+              colorScheme: ColorScheme.dark(),
+              canvasColor: Colors.black,
+              inputDecorationTheme: InputDecorationTheme(
+                hintStyle: TextStyle(color: Colors.white),
+              ),
+              appBarTheme: AppBarTheme(
+                backgroundColor: AppColors.primaryUofI,
+                actionsIconTheme: IconThemeData(color: Colors.white),
+                iconTheme: IconThemeData(color: Colors.white),
+              ),
+            ),
+            themeMode: ThemeMode.system,
+          ),
+          cupertino: (_, __) => CupertinoAppData(
+            theme: MediaQuery.of(context).platformBrightness == Brightness.light
+                ? lightTheme
+                : darkTheme,
+          ),
         ),
       ),
     );
@@ -168,6 +189,11 @@ class _OnePlaceTabs extends State<OnePlaceTabs> {
 
   @override
   void initState() {
+    final MSVideoFileProvider videoFile =
+        Provider.of<MSVideoFileProvider>(context, listen: false);
+    if (videoFile.externalDir == null && videoFile.status == null) {
+      videoFile.init();
+    }
     super.initState();
     final List<Widget> widgets = [
       LibraryTab(
