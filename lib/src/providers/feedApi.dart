@@ -14,7 +14,7 @@ class FeedAPI {
   Future<List<FeedItem>> getFeed(ApiService api) async {
     Uri uri = Uri.http(Config.baseEndpoint!, feedListPath);
 
-    final client = api._getClientWithAuth();
+    final client = await api.getClientWithAuth();
     final data = await client.get('/feed/list', queryParameters: {}); // qs for later
 
     // NOTE: Does this catch case of empty feed list?

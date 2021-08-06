@@ -37,14 +37,14 @@ class ApiService {
   ApiService({required firebaseAuth}) : this._firebaseAuth = firebaseAuth;
 
 
-  Dio _getClient() async {
+  Future<Dio> getClient() async {
     final Dio _dio = Dio();
 
-    _dio.options.baseUrl = _baseUrl + '/api/v1';
+    _dio.options.baseUrl = '$_baseUrl/api/v1';
     _dio.interceptors.clear();
 
     _dio.interceptors.add(InterceptorsWrapper(
-      onResponse: (Response response) {
+      onResponse: (Response response, handler) async {
         var data = response.data;
 
         if (data['error'] != null) {
@@ -53,9 +53,8 @@ class ApiService {
         }
 
         // save access token (refresh token is auto-saved by CookieManager above)
-        var _accessToken = (tmp = data["payload"]) == null ? null : tmp["accessToken"];
-        if (_accessToken) {
-          await storage.write(key: 'jwt_access', value: _accessToken);
+        if (data['payload']?['accessToken'] != null && data['payload']?['accessToken'] != '') {
+          await storage.write(key: 'jwt_access', value: data['payload']?['accessToken']);
         }
 
         return data;
@@ -77,7 +76,7 @@ class ApiService {
 
     final Dio _dio = Dio();
 
-    _dio.options.baseUrl = _baseUrl + '/api/v1';
+    _dio.options.baseUrl = '$_baseUrl/api/v1';
     _dio.interceptors.clear();
 
     // Add cookie (refresh token) to interceptor
@@ -86,7 +85,7 @@ class ApiService {
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (RequestOptions options, handler) {
         // Add access token to interceptor
-        options.headers['Authorization'] = 'Bearer ' + _accessToken;
+        options.headers['Authorization'] = 'Bearer ' + _accessToken!;
         handler.next(options);
       },
       onResponse: (Response response, handler) async {
@@ -104,33 +103,15 @@ class ApiService {
 
         // return response;
         return data;
-      }, onError: (DioError error) async {
-        // Catch response error
-        /*
-        // When server turns 403 Unauthorized, redo firebase login
-        // (hypothetical case for the moment)
-        if (error.response?.statusCode == 403) {
-          _dio.interceptors.requestLock.lock();
-          _dio.interceptors.responseLock.lock();
-
-          RequestOptions options = error.response.request;
-          await _login(); // gets new access & refresh token
-
-          _dio.interceptors.requestLock.unlock();
-          _dio.interceptors.responseLock.unlock();
-          return _dio.request(options.path, options: options);
-        } else {
-          return error;
-        }*/
-        throw HttpException(error.response?.reasonPhrase ?? error.response?.statusCode.toString());
-    }));
+      }
+    ));
     return _dio;
   }
 
   Future<void> _login() async {
     var user = await _firebaseAuth.userStream.first;
 
-    Dio client = _getClient();
+    Dio client = await getClient();
 
     Response response = await client.post('/user/login', data: {
       'email': user!.email,
