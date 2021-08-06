@@ -5,6 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/models/homeworkItem.dart';
 import 'package:oneplace_illinois/src/providers/homeworkApi.dart';
+import 'package:oneplace_illinois/src/widgets/alertBox.dart';
 import 'package:oneplace_illinois/src/widgets/homework/homework.dart';
 
 class HomeworkScreen extends StatefulWidget {
@@ -69,7 +70,9 @@ class _HomeworkScreenState extends State<HomeworkScreen> {
               );
             } else if (snapshot.hasError) {
               return Center(
-                child: Text(snapshot.error.toString()),
+                child: AlertBox(
+                  child: Text(snapshot.error.toString()),
+                ),
               );
             } else {
               return HomeworkItemWidget(homework: data);

@@ -12,8 +12,9 @@ import 'package:oneplace_illinois/src/models/file.dart';
 import 'package:oneplace_illinois/src/models/homeworkItem.dart';
 import 'package:oneplace_illinois/src/models/lectureItem.dart';
 import 'package:oneplace_illinois/src/models/sectionItem.dart';
-import 'package:oneplace_illinois/src/providers/courseApi.dart';
 import 'package:oneplace_illinois/src/providers/homeworkApi.dart';
+import 'package:oneplace_illinois/src/services/courseApi.dart';
+import 'package:oneplace_illinois/src/widgets/alertBox.dart';
 import 'package:oneplace_illinois/src/widgets/homework/homeworkList.dart';
 import 'package:oneplace_illinois/src/widgets/lecture/lectureList.dart';
 import 'package:oneplace_illinois/src/widgets/inherited/apiWidget.dart';
@@ -234,9 +235,28 @@ class _SectionViewState extends State<SectionView> {
         indent: 25.0,
         thickness: 1.5,
       ),
-      LectureList(
-        lectureItems: lectureItems.toList(),
-        courseItem: widget.courseItem,
+      FutureBuilder(
+        future: course,
+        initialData: null,
+        builder: (BuildContext context, AsyncSnapshot<CourseItem?> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.active:
+            case ConnectionState.none:
+              return SpinKitRing(color: AppColors.secondaryUofILightest);
+            case ConnectionState.done:
+              if (!snapshot.hasData) {
+                return AlertBox(
+                  child: Text(snapshot.error.toString()),
+                );
+              }
+
+              return LectureList(
+                lectureItems: lectureItems.toList(),
+                courseItem: snapshot.data!,
+              );
+          }
+        },
       ),
       SizedBox(
         height: MediaQuery.of(context).size.height / 3,
@@ -264,7 +284,9 @@ class _SectionViewState extends State<SectionView> {
           } else if (snapshot.hasError) {
             final error = snapshot.error;
             return Center(
-              child: Text(error.toString()),
+              child: AlertBox(
+                child: Text(error.toString()),
+              ),
             );
           } else {
             final SectionItem section = data[0];
