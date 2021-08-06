@@ -18,16 +18,31 @@ class ApiService {
   final Directory appDocDir = await getApplicationDocumentsDirectory();
   String appDocPath = appDocDir.path;
 
-  static PersistCookieJar _cookieJar = PersistCookieJar(
-    ignoreExpires: false, // don't save/load expired cookies
-    storage: FileStorage(appDocPath + '/.cookies/')
-  );
+  static PersistCookieJar _cookieJar;
+  static Future<PersistCookieJar> get cookieJar async {
+    if (_cookieJar == null) {
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+      String appDocPath  = appDocDir.path;
+      _cookieJar = new PersistCookieJar({
+        ignoreExpires: false, // don't save/load expired cookies
+        storage: appDocPath + '/.cookies/'
+      });
+    }
+    return _cookieJar;
+  }
 
   final storage = new FlutterSecureStorage(); // for storing access token
 
   FirebaseAuthService _firebaseAuth;
 
   ApiService({required firebaseAuth}) : this._firebaseAuth = firebaseAuth;
+
+
+  Future<String> _getCookieDirectory async {
+    final Directory appDocDir = await getApplicationDocumentsDirectory();
+    String appDocPath = appDocDir.path;
+    return appDocPath + '/.cookies/';
+  }
 
 
   Future<Dio> _getClient() async {
@@ -79,7 +94,7 @@ class ApiService {
     _dio.interceptors.clear();
 
     // Add cookie (refresh token) to interceptor
-    _dio.interceptors.add(CookieManager(cookieJar));
+    _dio.interceptors.add(CookieManager(_cookieJar));
 
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (RequestOptions options) {
