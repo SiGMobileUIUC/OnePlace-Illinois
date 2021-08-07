@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
+import 'package:oneplace_illinois/src/providers/accountProvider.dart';
 import 'package:oneplace_illinois/src/providers/mediSpaceFileProvider.dart';
 import 'package:oneplace_illinois/src/providers/mediaSpaceDownloadProvider.dart';
 import 'package:oneplace_illinois/src/screens/home/addItemTab.dart';
@@ -63,6 +64,13 @@ class _OnePlaceState extends State<OnePlace> {
         ),
         ChangeNotifierProvider<MSVideoFileProvider>(
           create: (context) => MSVideoFileProvider(),
+        ),
+        ChangeNotifierProvider<AccountProvider>(
+          create: (context) {
+            AccountProvider accountProvider = AccountProvider();
+            accountProvider.init();
+            return accountProvider;
+          },
         ),
       ],
       child: PlatformProvider(

@@ -59,26 +59,6 @@ class CourseItem implements Comparable {
 
   factory CourseItem.fromJSON(Map<String, dynamic> json, bool onlyCourses) {
     Semesters _sem = Semesters();
-    /* List<String> _getSectionsLinks(dynamic sections) {
-      if (sections is List) {
-        return sections.map((e) => e["href"].toString()).toList();
-      } else {
-        return [sections["href"].toString()];
-      }
-    }
-
-    List<String> _getCategories(dynamic json) {
-      if (json is List) {
-        return json
-            .map((e) =>
-                e["ns2\$genEdAttributes"]["genEdAttribute"]["\$t"].toString())
-            .toList();
-      } else {
-        return [
-          json["ns2\$genEdAttributes"]["genEdAttribute"]["\$t"].toString()
-        ];
-      }
-    } */
 
     List<SectionItem> _getSections(List<dynamic> list) {
       List<SectionItem> sections =
@@ -89,7 +69,7 @@ class CourseItem implements Comparable {
     dynamic course = CourseItem(
       year: json["year"],
       semester: _sem.fromString(json["semester"]),
-      semesterID: json["semesterID"],
+      semesterID: json["semesterID"].toString(),
       subject: json["subject"],
       subjectID: json["subjectId"],
       courseID: json["courseId"],
@@ -99,7 +79,7 @@ class CourseItem implements Comparable {
       courseSectionInformation: json["courseSectionInformation"] ?? null,
       classScheduleInformation: json["classScheduleInformation"] ?? null,
       sections: _getSections(json["sections"]),
-      categories: [json["genEd"]],
+      categories: List<String>.from(json["genEd"]),
     );
     return course;
   }

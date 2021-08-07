@@ -75,7 +75,7 @@ class Search extends SearchDelegate<CourseItem> {
   }
 
   _getCourses() {
-    return _courseAPI.getCourses(query, false);
+    return _courseAPI.getCourses(query);
   }
 
   /* Future<CourseItem?> _getCourse(CourseListItem courseListItem) async {

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
+import 'package:oneplace_illinois/src/providers/accountProvider.dart';
 import 'package:oneplace_illinois/src/services/firebaseAuth.dart';
 import 'package:oneplace_illinois/src/widgets/boxItem.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,8 @@ class SettingsDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final User? user = Provider.of<User?>(context);
+    final AccountProvider account =
+        Provider.of<AccountProvider>(context, listen: false);
     return Theme(
       data: Theme.of(context).copyWith(
         canvasColor:
@@ -61,6 +64,7 @@ class SettingsDrawer extends StatelessWidget {
                   ListTile(
                     dense: true,
                     onTap: () async {
+                      await account.signOut();
                       await _authService.signOut();
                     },
                     title: Text(

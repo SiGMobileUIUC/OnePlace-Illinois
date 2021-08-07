@@ -1,8 +1,6 @@
-import 'package:http/http.dart';
 import 'package:xml2json/xml2json.dart';
 
 class CourseExplorerApi {
-  Client client = Client();
   // final String _authority = "courses.illinois.edu";
   final Xml2Json xml2json = Xml2Json();
 
