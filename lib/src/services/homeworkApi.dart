@@ -1,4 +1,3 @@
-import 'package:http/http.dart';
 import 'package:oneplace_illinois/src/misc/enums.dart';
 import 'package:oneplace_illinois/src/models/courseItem.dart';
 import 'package:oneplace_illinois/src/models/homeworkItem.dart';
@@ -20,8 +19,6 @@ final course = CourseItem(
 );
 
 class HomeworkAPI {
-  Client client = Client();
-
   Future<HomeworkItem> getHomework(String homeworkCode) async {
     final homework = HomeworkItem(
       name: 'Homework 1',

@@ -200,10 +200,6 @@ class _CourseViewState extends State<CourseView> {
     ];
   }
 
-  /* _getSection(CourseItem? courseItem) {
-    return _courseExplorerApi.getSections(courseItem!.sections);
-  } */
-
   Widget buildCategories(CourseItem courseItem) {
     if (courseItem.categories.isNotEmpty &&
         courseItem.categories[0].isNotEmpty) {
@@ -217,7 +213,6 @@ class _CourseViewState extends State<CourseView> {
               child: Text(
                 "General Education Categories:",
                 style: Theme.of(context).textTheme.headline6!.copyWith(
-                      // color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
               ),
@@ -232,7 +227,6 @@ class _CourseViewState extends State<CourseView> {
                     ? Text(
                         courseItem.categories[index],
                         style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                              // color: Colors.black,
                               fontWeight: FontWeight.w600,
                             ),
                       )
@@ -270,8 +264,7 @@ class _CourseViewState extends State<CourseView> {
                   CupertinoPageRoute(
                     builder: (context) {
                       return SectionView(
-                        course: courseItem,
-                        section: courseItem.sections[index],
+                        sectionItem: courseItem.sections[index],
                       );
                     },
                   ),
@@ -281,9 +274,8 @@ class _CourseViewState extends State<CourseView> {
                   EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
               isThreeLine: true,
               title: Text(
-                courseItem.sections[index].sectionNumber,
+                courseItem.sections[index].sectionID,
                 style: TextStyle(
-                  // color: Colors.black,
                   fontWeight: FontWeight.bold,
                   fontSize: 20.0,
                 ),

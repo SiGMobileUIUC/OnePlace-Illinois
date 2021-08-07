@@ -1,5 +1,4 @@
 import 'homeworkItem.dart';
-import 'meeting.dart';
 import 'sectionItem.dart';
 
 enum FeedItemType { Homework, Lecture, Section }
@@ -20,7 +19,7 @@ extension FeedItemTypeExtension on FeedItemType {
 
 class FeedItem {
   /// The owning section for this feed item
-  SectionItem owner;
+  SectionItem? owner;
 
   /// The "body" of this feed item. Description text/message
   String body;
@@ -41,7 +40,7 @@ class FeedItem {
   String? attachmentUrl;
 
   FeedItem({
-    required this.owner,
+    this.owner,
     required this.body,
     required this.postDate,
     required this.type,
@@ -52,7 +51,7 @@ class FeedItem {
 
   factory FeedItem.fromJSON(Map<String, dynamic> json) {
     FeedItem feedItem = FeedItem(
-      owner: SectionItem.fromJSON(json['Section']),
+      owner: SectionItem.fromJSON(json['sectionDetail']),
       body: json['body'],
       postDate: DateTime.parse(json['createdAt']),
       type: FeedItemTypeExtension.fromIndex(json['type'])!,

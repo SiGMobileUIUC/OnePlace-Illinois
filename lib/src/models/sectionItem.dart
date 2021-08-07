@@ -1,89 +1,108 @@
 class SectionItem {
-  String course;
+  /// The current year for the section.
+  int year;
 
-  /// ns2:section -> sectionNumber
-  String sectionNumber;
+  /// The current term for the section .
+  String term;
 
-  /// ns2:section id
-  int sectionID;
+  /// The section CRN.
+  int crn;
 
-  /// ns2:section -> sectionCappArea
-  String? sectionCappArea;
-
-  /// ns2:section -> partOfTerm
-  String partOfTerm;
-
-  /// ns2:section -> enrollmentStatus
-  String enrollmentStatus;
-
-  String? sectionNotes;
-
-  /* /// ns2:section -> startDate
-  DateTime startDate;
-
-  /// ns2:section -> endDate
-  DateTime endDate; */
-
-  /// ns2:section -> meetings -> meeting -> instructors -> instructor
-  List<String> instructors;
-
-  String type;
-
-  String typeCode;
-
+  /// The [course] and [crn] seperated by a `_` which can be used to make an API request.
   String fullCode;
 
+  /// The course for the section; CS124.
+  String course;
+
+  /// The section ID for the section; ABA, ABB, AL1, etc.
+  String sectionID;
+
+  /// The numerical term the section is in.
+  int partOfTerm;
+
+  /// Title of the section, often an empty string.
+  String sectionTitle;
+
+  /// The status for the section.
+  ///
+  /// Should rarely be used, consider using [enrollmentStatus] instead.
+  String sectionStatus;
+
+  /// The credit hours for this section.
+  String creditHours;
+
+  /// The current enrollment status of the section; Open (Restricted).
+  String enrollmentStatus;
+
+  /// The type of lectures the section will have; Online Lecture.
+  String type;
+
+  /// The code for [type]; OLC.
+  String typeCode;
+
+  /// The start time for the section.
+  String startTime;
+
+  /// The end time for the section.
+  String endTime;
+
+  /// The days of the week that the section meets.
+  ///
+  /// Note: This can often be an empty string.
   String daysOfWeek;
 
+  /// The room that the section meets in.
   String room;
 
+  /// The building that the section meets in.
   String building;
 
+  /// List of instructors teaching the section.
+  List<String> instructors;
+
   SectionItem({
+    required this.year,
+    required this.term,
+    required this.crn,
+    required this.fullCode,
     required this.course,
-    required this.sectionNumber,
     required this.sectionID,
-    required this.sectionCappArea,
     required this.partOfTerm,
+    required this.sectionTitle,
+    required this.sectionStatus,
+    required this.creditHours,
     required this.enrollmentStatus,
-    required this.sectionNotes,
-    // required this.startDate,
-    // required this.endDate,
-    required this.instructors,
     required this.type,
     required this.typeCode,
-    required this.fullCode,
+    required this.startTime,
+    required this.endTime,
     required this.daysOfWeek,
     required this.room,
     required this.building,
+    required this.instructors,
   });
 
   factory SectionItem.fromJSON(Map<String, dynamic> json) {
-    /* List<Instructor?> _getInstructor(dynamic json) {
-      if (json is List) {
-        return json.toList().map((e) => Instructor.fromJSON(e)).toList();
-      } else {
-        return [];
-      }
-    } */
-
     dynamic courseSection = SectionItem(
       course: json["course"],
-      sectionNumber: json["code"],
+      crn: json["code"],
       sectionID: json["CRN"],
-      sectionCappArea: json["sectionCappArea"] ?? null,
-      partOfTerm: json["part_of_term"],
+      partOfTerm: int.parse(json["part_of_term"]),
       enrollmentStatus: json["enrollment_status"],
-      sectionNotes: json["sectionNotes"] ?? null,
-      // startDate: DateTime.parse(json["start_date"]),
-      // endDate: DateTime.parse(json["end_date"]),
-      instructors: [json["instructors"]],
+      instructors: json["instructors"].split(";"),
       type: json["type"],
       typeCode: json["type_code"],
       fullCode: json["full_code"],
       daysOfWeek: json["days_of_week"],
       room: json["room"],
       building: json["building"],
+      creditHours: json["section_credit_hours"],
+      endTime: json["end_time"],
+      sectionStatus: json["section_status"],
+      sectionTitle: json["section_title"],
+      startTime: json["start_time"],
+      term: json["term"],
+      year: json["year"],
     );
     return courseSection;
   }

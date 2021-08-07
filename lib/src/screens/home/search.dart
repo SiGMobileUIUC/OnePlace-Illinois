@@ -9,12 +9,10 @@ import 'package:oneplace_illinois/src/models/courseItem.dart';
 import 'package:oneplace_illinois/src/services/courseApi.dart';
 import 'package:oneplace_illinois/src/screens/courses/specificCourseView.dart';
 import 'package:oneplace_illinois/src/widgets/alertBox.dart';
-import 'package:oneplace_illinois/src/widgets/inherited/apiWidget.dart';
 
 class Search extends SearchDelegate<CourseItem> {
   List<CourseItem>? _courses = [];
   final CourseAPI _courseAPI = CourseAPI();
-  // final CourseExplorerApi _courseExplorerApi = CourseExplorerApi();
   final CourseItem emptyCourseItem = CourseItem(
     year: 0,
     semester: Semester.Fall,
@@ -79,16 +77,11 @@ class Search extends SearchDelegate<CourseItem> {
     return _courseAPI.getCourses(query);
   }
 
-  /* Future<CourseItem?> _getCourse(CourseListItem courseListItem) async {
-    CourseItem? course = await _courseExplorerApi.getCourse(courseListItem);
-    return course;
-  } */
-
   @override
   Widget buildResults(BuildContext context) {
     return Container(
       child: FutureBuilder(
-          future: _getCourses(context),
+          future: _getCourses(),
           builder: (BuildContext context,
               AsyncSnapshot<List<CourseItem>?> snapshot) {
             switch (snapshot.connectionState) {
@@ -108,7 +101,8 @@ class Search extends SearchDelegate<CourseItem> {
                       ? AlertBox(
                           child: Text(
                             'No Search results found for $query',
-                            style: TextStyle(color: Colors.white),
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 15.0),
                           ),
                         )
                       : Container();

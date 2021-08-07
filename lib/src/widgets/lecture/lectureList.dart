@@ -8,8 +8,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/misc/enums.dart';
+import 'package:oneplace_illinois/src/models/sectionItem.dart';
 import 'package:oneplace_illinois/src/providers/mediSpaceFileProvider.dart';
-import 'package:oneplace_illinois/src/models/courseItem.dart';
 import 'package:oneplace_illinois/src/models/lectureItem.dart';
 import 'package:oneplace_illinois/src/providers/mediaSpaceDownloadProvider.dart';
 import 'package:oneplace_illinois/src/screens/lectures/lecturePage.dart';
@@ -20,12 +20,12 @@ import 'package:transparent_image/transparent_image.dart';
 
 class LectureList extends StatefulWidget {
   final List<LectureItem> lectureItems;
-  final CourseItem courseItem;
+  final SectionItem sectionItem;
 
   LectureList({
     Key? key,
     required this.lectureItems,
-    required this.courseItem,
+    required this.sectionItem,
   }) : super(key: key);
 
   @override
@@ -60,7 +60,7 @@ class _LectureListState extends State<LectureList> {
                     builder: (context) {
                       return LecturePage(
                         lectureItem: widget.lectureItems[index],
-                        courseItem: widget.courseItem,
+                        sectionItem: widget.sectionItem,
                         downloaded: true,
                         path: path,
                       );
@@ -75,7 +75,7 @@ class _LectureListState extends State<LectureList> {
                 builder: (context) {
                   return LecturePage(
                     lectureItem: widget.lectureItems[index],
-                    courseItem: widget.courseItem,
+                    sectionItem: widget.sectionItem,
                     downloaded: false,
                     path: "",
                   );

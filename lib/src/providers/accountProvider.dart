@@ -18,17 +18,17 @@ class AccountProvider extends ChangeNotifier {
   String? jwt;
   bool working = false;
 
-  List<SectionItem> followedSections = [];
-  List<FeedItem> feedItems = [];
+  List<SectionItem>? sections;
+  List<FeedItem>? feedItems;
 
   Future<void> init() async {
     working = true;
     notifyListeners();
 
-    await api.init();
-    jwt = await api.getJwt();
+    await this.api.init();
+    jwt = await this.api.getJwt();
     notifyListeners();
-    api.interceptors.add(
+    this.api.interceptors.add(
       InterceptorsWrapper(
         onResponse: (Response<dynamic> response,
             ResponseInterceptorHandler handler) async {
@@ -37,18 +37,16 @@ class AccountProvider extends ChangeNotifier {
             throw ApiException(response.data['error']);
           }
 
-          dynamic payload = response.data["payload"];
+          Map<String, dynamic> payload = response.data["payload"];
 
           // save access token (refresh token is auto-saved by CookieManager above)
-          if (payload.isNotEmpty && payload != null) {
-            if (payload?["accesstoken"] != null) {
-              await storage.write(
-                key: 'jwt_access',
-                value: payload[0]['accessToken'],
-              );
-              jwt = payload[0]['accessToken'];
-              notifyListeners();
-            }
+          if (payload["accesstoken"] != null) {
+            await storage.write(
+              key: 'jwt_access',
+              value: payload[0]['accessToken'],
+            );
+            jwt = payload[0]['accessToken'];
+            notifyListeners();
           }
           handler.resolve(response);
         },
@@ -61,17 +59,17 @@ class AccountProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  CookieJar get cookieJar => api.cookieJar;
+  CookieJar get cookieJar => this.api.cookieJar;
 
-  Future<List<FeedItem>> getFeed() async {
+  Future<List<FeedItem>?> getFeed() async {
     Uri uri = Uri.http(Config.baseEndpoint!, "/api/v1/feed/list");
 
-    final response = await api.getUri(
-      uri,
-      options: dioOptions.Options(
-        headers: {"Authorization": "Bearer ${this.jwt}"},
-      ),
-    );
+    final response = await this.api.getUri(
+          uri,
+          options: dioOptions.Options(
+            headers: {"Authorization": "Bearer ${this.jwt}"},
+          ),
+        );
 
     if (response.statusCode != 200) {
       throw HttpException(response.statusCode.toString());
@@ -84,49 +82,78 @@ class AccountProvider extends ChangeNotifier {
       throw ApiException(data['error']);
     }
 
-    if (List.from(data["payload"]).isEmpty) {
+    if (List.from(data["payload"]["feed"]).isEmpty) {
       feedItems = [];
+      notifyListeners();
       return feedItems;
     }
 
     feedItems =
         data['payload'].map<FeedItem>((e) => FeedItem.fromJSON(e)).toList();
-    feedItems.sort((a, b) => a.postDate.compareTo(b.postDate));
+    feedItems!.sort((a, b) => a.postDate.compareTo(b.postDate));
     notifyListeners();
     return feedItems;
   }
 
-  Future<List<SectionItem>> getSections() async {
+  Future<List<SectionItem>?> getSections() async {
     Uri uri = Uri.http(Config.baseEndpoint!, "/api/v1/library/search");
 
-    final response = await api.getUri(
-      uri,
-      options: dioOptions.Options(
-        headers: {"Authorization": "Bearer $jwt"},
-      ),
-    );
+    final response = await this.api.getUri(
+          uri,
+          options: dioOptions.Options(
+            headers: {"Authorization": "Bearer ${this.jwt}"},
+          ),
+        );
+
     if (response.statusCode != 200) {
       throw HttpException(response.statusCode.toString());
     }
+
     Map<String, dynamic> data = response.data;
+
     if (data['error'] != null) {
       log(data.toString());
       throw ApiException(data['error']);
     }
 
     if (data["payload"]["library"].isEmpty) {
-      followedSections = [];
-      return followedSections;
+      sections = [];
+      notifyListeners();
+      return sections;
     }
 
-    followedSections =
-        data['payload'].map((e) => SectionItem.fromJSON(e)).toList();
-    return followedSections;
+    sections = data['payload'].map((e) => SectionItem.fromJSON(e)).toList();
+    notifyListeners();
+    return sections;
+  }
+
+  Future<void> addSectionItem(SectionItem sectionItem) async {
+    Uri uri = Uri.http(Config.baseEndpoint!, "/api/v1/library/add");
+
+    final response = await this.api.postUri(uri,
+        options: dioOptions.Options(
+          headers: {"Authorization": "Bearer ${this.jwt}"},
+        ),
+        data: {"course": sectionItem.fullCode, "section": sectionItem.crn});
+
+    if (response.statusCode != 200) {
+      throw HttpException(response.statusCode.toString());
+    }
+
+    Map<String, dynamic> data = response.data;
+
+    if (data['error'] != null || data["status"] != "success") {
+      log(data.toString());
+      throw ApiException(data['error']);
+    }
+
+    sections!.add(sectionItem);
+    notifyListeners();
   }
 
   Future<void> signOut() async {
     this.feedItems = [];
-    this.followedSections = [];
+    this.sections = [];
     this.jwt = null;
     await this.cookieJar.deleteAll();
     await this.storage.deleteAll();
