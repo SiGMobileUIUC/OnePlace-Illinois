@@ -9,6 +9,7 @@ import 'package:oneplace_illinois/src/models/courseItem.dart';
 import 'package:oneplace_illinois/src/services/courseApi.dart';
 import 'package:oneplace_illinois/src/screens/courses/specificCourseView.dart';
 import 'package:oneplace_illinois/src/widgets/alertBox.dart';
+import 'package:oneplace_illinois/src/widgets/inherited/apiWidget.dart';
 
 class Search extends SearchDelegate<CourseItem> {
   List<CourseItem>? _courses = [];
@@ -87,7 +88,7 @@ class Search extends SearchDelegate<CourseItem> {
   Widget buildResults(BuildContext context) {
     return Container(
       child: FutureBuilder(
-          future: _getCourses(),
+          future: _getCourses(context),
           builder: (BuildContext context,
               AsyncSnapshot<List<CourseItem>?> snapshot) {
             switch (snapshot.connectionState) {

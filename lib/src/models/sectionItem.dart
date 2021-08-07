@@ -1,4 +1,6 @@
 class SectionItem {
+  String course;
+
   /// ns2:section -> sectionNumber
   String sectionNumber;
 
@@ -29,6 +31,8 @@ class SectionItem {
 
   String typeCode;
 
+  String fullCode;
+
   String daysOfWeek;
 
   String room;
@@ -36,6 +40,7 @@ class SectionItem {
   String building;
 
   SectionItem({
+    required this.course,
     required this.sectionNumber,
     required this.sectionID,
     required this.sectionCappArea,
@@ -47,6 +52,7 @@ class SectionItem {
     required this.instructors,
     required this.type,
     required this.typeCode,
+    required this.fullCode,
     required this.daysOfWeek,
     required this.room,
     required this.building,
@@ -62,6 +68,7 @@ class SectionItem {
     } */
 
     dynamic courseSection = SectionItem(
+      course: json["course"],
       sectionNumber: json["code"],
       sectionID: json["CRN"],
       sectionCappArea: json["sectionCappArea"] ?? null,
@@ -73,6 +80,7 @@ class SectionItem {
       instructors: [json["instructors"]],
       type: json["type"],
       typeCode: json["type_code"],
+      fullCode: json["full_code"],
       daysOfWeek: json["days_of_week"],
       room: json["room"],
       building: json["building"],

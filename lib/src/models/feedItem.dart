@@ -1,4 +1,5 @@
 import 'homeworkItem.dart';
+import 'meeting.dart';
 import 'sectionItem.dart';
 
 enum FeedItemType { Homework, Lecture, Section }

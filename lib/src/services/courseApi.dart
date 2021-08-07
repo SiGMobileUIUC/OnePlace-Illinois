@@ -31,13 +31,14 @@ class CourseAPI {
       return null;
     }
     List<dynamic> data = response.data["payload"]['courses'];
+
     List<CourseItem> courses =
         data.map((e) => CourseItem.fromJSON(e, onlyCourses)).toList();
     courses.sort((a, b) => a.compareTo([query, b]));
     return courses;
   }
 
-  Future<SectionItem> getSection(String fullCode, BuildContext context) async {
+  Future<SectionItem> getSection(String fullCode) async {
     List<String> codeSections = fullCode.split('_');
     String code = codeSections[0];
     String crn = codeSections[1];
@@ -50,6 +51,7 @@ class CourseAPI {
     }
 
     dynamic data = response.data['payload']['sections'][0];
+
     SectionItem section = SectionItem.fromJSON(data);
     return section;
   }

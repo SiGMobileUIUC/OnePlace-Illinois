@@ -270,8 +270,8 @@ class _CourseViewState extends State<CourseView> {
                   CupertinoPageRoute(
                     builder: (context) {
                       return SectionView(
-                        courseItem: courseItem,
-                        sectionItem: courseItem.sections[index],
+                        course: courseItem,
+                        section: courseItem.sections[index],
                       );
                     },
                   ),

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +16,7 @@ import 'package:oneplace_illinois/src/screens/settingsDrawer.dart';
 import 'package:oneplace_illinois/src/screens/login/splashScreen.dart';
 import 'package:oneplace_illinois/src/services/firebaseAuth.dart';
 import 'package:oneplace_illinois/src/providers/mediaSpaceDownload.dart';
+import 'package:oneplace_illinois/src/widgets/inherited/services.dart';
 import 'package:oneplace_illinois/src/widgets/sliverView.dart';
 import 'package:provider/provider.dart';
 
@@ -49,11 +52,6 @@ class _OnePlaceState extends State<OnePlace> {
       primaryColor: AppColors.secondaryUofILightest,
     );
 
-    // Future proofing; If we ever need to access a class or object that is not a part of the current class or screen, we can by initializing a provider here.
-    /* return MultiProvider(
-      providers: [
-      ],
-      child: */
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<MSDownload>(
@@ -73,63 +71,65 @@ class _OnePlaceState extends State<OnePlace> {
           },
         ),
       ],
-      child: PlatformProvider(
-        settings: PlatformSettingsData(iosUsesMaterialWidgets: true),
-        builder: (context) => PlatformApp(
-          debugShowCheckedModeBanner: false,
-          localizationsDelegates: <LocalizationsDelegate<dynamic>>[
-            DefaultMaterialLocalizations.delegate,
-            DefaultWidgetsLocalizations.delegate,
-            DefaultCupertinoLocalizations.delegate,
-          ],
-          title: "One Place",
-          home: StreamProvider<User?>.value(
-            value: FirebaseAuthService().userStream,
-            initialData: FirebaseAuthService().user,
-            child: SplashScreen(),
-          ),
-          material: (_, __) => MaterialAppData(
-            theme: ThemeData(
-              brightness: Brightness.light,
-              scaffoldBackgroundColor: Colors.white,
-              canvasColor: Colors.white,
-              inputDecorationTheme: InputDecorationTheme(
-                hintStyle: TextStyle(color: Colors.white),
-              ),
-              backgroundColor: Colors.white,
-              colorScheme: ColorScheme.light(),
-              appBarTheme: AppBarTheme(
-                backgroundColor: AppColors.secondaryUofILight,
-                actionsIconTheme: IconThemeData(color: Colors.white),
-                iconTheme: IconThemeData(color: Colors.white),
-              ),
+      child: Services(
+        child: PlatformProvider(
+          settings: PlatformSettingsData(iosUsesMaterialWidgets: true),
+          builder: (context) => PlatformApp(
+            debugShowCheckedModeBanner: false,
+            localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+              DefaultMaterialLocalizations.delegate,
+              DefaultWidgetsLocalizations.delegate,
+              DefaultCupertinoLocalizations.delegate,
+            ],
+            title: "One Place",
+            home: StreamProvider<User?>.value(
+              value: FirebaseAuthService().userStream,
+              initialData: FirebaseAuthService().user,
+              child: SplashScreen(),
             ),
-            darkTheme: ThemeData(
-              brightness: Brightness.dark,
-              scaffoldBackgroundColor: Colors.black,
-              backgroundColor: Colors.black,
-              colorScheme: ColorScheme.dark(),
-              canvasColor: Colors.black,
-              inputDecorationTheme: InputDecorationTheme(
-                hintStyle: TextStyle(color: Colors.white),
+            material: (_, __) => MaterialAppData(
+              theme: ThemeData(
+                brightness: Brightness.light,
+                scaffoldBackgroundColor: Colors.white,
+                canvasColor: Colors.white,
+                inputDecorationTheme: InputDecorationTheme(
+                  hintStyle: TextStyle(color: Colors.white),
+                ),
+                backgroundColor: Colors.white,
+                colorScheme: ColorScheme.light(),
+                appBarTheme: AppBarTheme(
+                  backgroundColor: AppColors.secondaryUofILight,
+                  actionsIconTheme: IconThemeData(color: Colors.white),
+                  iconTheme: IconThemeData(color: Colors.white),
+                ),
               ),
-              appBarTheme: AppBarTheme(
-                backgroundColor: AppColors.primaryUofI,
-                actionsIconTheme: IconThemeData(color: Colors.white),
-                iconTheme: IconThemeData(color: Colors.white),
+              darkTheme: ThemeData(
+                brightness: Brightness.dark,
+                scaffoldBackgroundColor: Colors.black,
+                backgroundColor: Colors.black,
+                colorScheme: ColorScheme.dark(),
+                canvasColor: Colors.black,
+                inputDecorationTheme: InputDecorationTheme(
+                  hintStyle: TextStyle(color: Colors.white),
+                ),
+                appBarTheme: AppBarTheme(
+                  backgroundColor: AppColors.primaryUofI,
+                  actionsIconTheme: IconThemeData(color: Colors.white),
+                  iconTheme: IconThemeData(color: Colors.white),
+                ),
               ),
+              themeMode: ThemeMode.system,
             ),
-            themeMode: ThemeMode.system,
-          ),
-          cupertino: (_, __) => CupertinoAppData(
-            theme: MediaQuery.of(context).platformBrightness == Brightness.light
-                ? lightTheme
-                : darkTheme,
+            cupertino: (_, __) => CupertinoAppData(
+              theme:
+                  MediaQuery.of(context).platformBrightness == Brightness.light
+                      ? lightTheme
+                      : darkTheme,
+            ),
           ),
         ),
       ),
     );
-    // );
   }
 }
 
