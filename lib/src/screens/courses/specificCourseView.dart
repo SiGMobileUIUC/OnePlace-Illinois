@@ -24,14 +24,13 @@ class _CourseViewState extends State<CourseView> {
   List<Widget> _getDetails(CourseItem course) {
     return <Widget>[
       ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
+        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.5),
         isThreeLine: true,
         title: FittedBox(
           fit: BoxFit.fitWidth,
           child: Text(
             course.title,
             style: TextStyle(
-              // color: Colors.black,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -86,7 +85,7 @@ class _CourseViewState extends State<CourseView> {
         thickness: 1.5,
       ),
       ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.5),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -117,42 +116,47 @@ class _CourseViewState extends State<CourseView> {
         thickness: 1.5,
       ),
       buildCategories(course),
-      course.classScheduleInformation != null
-          ? ListTile(
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(bottom: 5.0),
-                    child: Text(
-                      "Class Schedule Information:",
-                      style: Theme.of(context).textTheme.headline6!.copyWith(
-                            // color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ),
-                  Text(
-                    course.classScheduleInformation.toString(),
-                    style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                          // color: Colors.black,
-                          fontWeight: FontWeight.w600,
+      (course.classScheduleInformation != null &&
+              course.classScheduleInformation != "")
+          ? Column(
+              children: [
+                ListTile(
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.5),
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(bottom: 5.0),
+                        child: Text(
+                          "Class Schedule Information:",
+                          style:
+                              Theme.of(context).textTheme.headline6!.copyWith(
+                                    // color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
+                      ),
+                      Text(
+                        course.classScheduleInformation.toString(),
+                        style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                    ],
                   ),
-                  Divider(
-                    // color: Colors.grey[500],
-                    endIndent: 25.0,
-                    indent: 25.0,
-                    thickness: 1.5,
-                  ),
-                ],
-              ),
+                ),
+                Divider(
+                  // color: Colors.grey[500],
+                  endIndent: 25.0,
+                  indent: 25.0,
+                  thickness: 1.5,
+                ),
+              ],
             )
           : SizedBox(),
       ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.5),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -204,7 +208,7 @@ class _CourseViewState extends State<CourseView> {
     if (courseItem.categories.isNotEmpty &&
         courseItem.categories[0].isNotEmpty) {
       return ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.5),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -248,8 +252,9 @@ class _CourseViewState extends State<CourseView> {
 
   Widget _buildSections(CourseItem courseItem) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
+      padding: EdgeInsets.all(5.0),
       child: ListView.builder(
+        padding: EdgeInsets.all(0),
         itemCount: courseItem.sections.length,
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),

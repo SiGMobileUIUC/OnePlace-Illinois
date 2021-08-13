@@ -83,53 +83,40 @@ class _FeedTabState extends State<FeedTab> {
 
   Widget _buildFeedItemWidget(FeedItem item) {
     return Container(
-      padding: EdgeInsets.all(5),
+      padding: EdgeInsets.all(15),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            _getTitle(item.section?.course),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 25.0,
+            ),
+          ),
+          SizedBox(height: 5.0),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              InkWell(
-                onTap: () => Navigator.of(context, rootNavigator: true).push(
-                  CupertinoPageRoute(
-                    builder: (context) {
-                      return SectionView(
-                        sectionItem: SectionItem(
-                          year: 2021,
-                          term: "fall",
-                          crn: 74477,
-                          fullCode: "CS124_74477",
-                          course: "CS124",
-                          sectionID: "AL1",
-                          partOfTerm: 1,
-                          sectionTitle: "",
-                          sectionStatus: "A",
-                          creditHours: "",
-                          enrollmentStatus: "Open (Restricted)",
-                          type: "Online Lecture",
-                          typeCode: "OLC",
-                          startTime: "ARRANGED",
-                          endTime: "",
-                          daysOfWeek: "",
-                          room: "",
-                          building: "",
-                          instructors: ["Challen, G", "Lewis, C"],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                child: Text('${item.owner!.course} '),
+              Text(
+                item.action,
+                style: TextStyle(fontSize: 15.0),
               ),
-              Text(item.action),
-              Spacer(),
-              Text('${postDateFormatter.format(item.postDate)}',
-                  style: TextStyle(color: Colors.grey[700])),
+              Text(
+                '${postDateFormatter.format(item.postDate)}',
+                style: TextStyle(
+                  color: Colors.grey[700],
+                  fontSize: 15.0,
+                ),
+              ),
             ],
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 5.0),
           Text(
             item.body,
-            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 17.0,
+            ),
           ),
           SizedBox(height: 20),
           Row(
@@ -139,8 +126,12 @@ class _FeedTabState extends State<FeedTab> {
                   children: [
                     Icon(PlatformIcons(context).time),
                     SizedBox(width: 5),
-                    Text('Appears in calendar',
-                        style: TextStyle(color: Colors.grey[450]))
+                    Text(
+                      'Appears in calendar',
+                      style: TextStyle(
+                        color: Colors.grey[450],
+                      ),
+                    )
                   ],
                 ),
               Spacer(),
@@ -168,17 +159,28 @@ class _FeedTabState extends State<FeedTab> {
     );
   }
 
+  String _getTitle(String? title) {
+    if (title != null) {
+      int index = title.indexOf(RegExp(r"[0-9]"));
+      String name = title.substring(0, index);
+      String number = title.substring(index, title.length);
+      return "$name $number";
+    }
+    return "";
+  }
+
   Widget _getScreenForFeedItem(FeedItem item) {
     switch (item.type) {
       case FeedItemType.Homework:
         return HomeworkScreen(homeworkCode: item.itemCode);
       case FeedItemType.Section:
         return SectionView(
-          sectionItem: item.owner!,
+          sectionItem: item.section!,
         );
       default:
         return throw UnimplementedError(
-            'No other item screens yet implemented.');
+          'No other item screens yet implemented.',
+        );
     }
   }
 }

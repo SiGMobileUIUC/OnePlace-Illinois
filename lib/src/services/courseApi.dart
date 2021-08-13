@@ -18,7 +18,7 @@ class CourseAPI {
         CacheConfig(
           baseUrl: Config.baseEndpoint!,
           defaultMaxAge: Duration(
-            days: 1,
+            hours: 1,
           ),
         ),
       ).interceptor,

@@ -16,7 +16,6 @@ class Search extends SearchDelegate<CourseItem> {
   final CourseItem emptyCourseItem = CourseItem(
     year: 0,
     semester: Semester.Fall,
-    semesterID: "0",
     subject: "",
     subjectID: "",
     courseID: 0,
@@ -27,6 +26,7 @@ class Search extends SearchDelegate<CourseItem> {
     classScheduleInformation: "",
     sections: [],
     categories: [""],
+    fullCode: "",
   );
 
   @override
@@ -74,7 +74,7 @@ class Search extends SearchDelegate<CourseItem> {
   }
 
   _getCourses() {
-    return _courseAPI.getCourses(query);
+    return _courseAPI.getCourses(query, onlyCourses: false);
   }
 
   @override

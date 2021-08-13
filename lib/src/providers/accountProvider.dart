@@ -52,8 +52,7 @@ class AccountProvider extends ChangeNotifier {
         },
       ),
     );
-    await this.getFeed();
-    await this.getSections();
+    await updateLists();
 
     working = false;
     notifyListeners();
@@ -61,8 +60,15 @@ class AccountProvider extends ChangeNotifier {
 
   CookieJar get cookieJar => this.api.cookieJar;
 
+  Future<void> updateLists() async {
+    await this.getFeed();
+    await this.getSections();
+  }
+
   Future<List<FeedItem>?> getFeed() async {
-    Uri uri = Uri.http(Config.baseEndpoint!, "/api/v1/feed/list");
+    Uri uri = Uri.http(Config.baseEndpoint!, "/api/v1/feed/list", {
+      "only_feeds": false.toString(),
+    });
 
     final response = await this.api.getUri(
           uri,
@@ -82,14 +88,15 @@ class AccountProvider extends ChangeNotifier {
       throw ApiException(data['error']);
     }
 
-    if (List.from(data["payload"]["feed"]).isEmpty) {
+    if (List.from(data["payload"]["feeds"]).isEmpty) {
       feedItems = [];
       notifyListeners();
       return feedItems;
     }
 
-    feedItems =
-        data['payload'].map<FeedItem>((e) => FeedItem.fromJSON(e)).toList();
+    feedItems = data['payload']["feeds"]
+        .map<FeedItem>((e) => FeedItem.fromJSON(e))
+        .toList();
     feedItems!.sort((a, b) => a.postDate.compareTo(b.postDate));
     notifyListeners();
     return feedItems;
@@ -121,20 +128,28 @@ class AccountProvider extends ChangeNotifier {
       notifyListeners();
       return sections;
     }
+    List<dynamic> dataSections = data['payload']['library'];
 
-    sections = data['payload'].map((e) => SectionItem.fromJSON(e)).toList();
+    sections = dataSections
+        .map((e) => SectionItem.fromJSON(e["sectionData"]))
+        .toList();
     notifyListeners();
     return sections;
   }
 
-  Future<void> addSectionItem(SectionItem sectionItem) async {
+  Future<void> addSection(SectionItem sectionItem) async {
     Uri uri = Uri.http(Config.baseEndpoint!, "/api/v1/library/add");
 
-    final response = await this.api.postUri(uri,
-        options: dioOptions.Options(
-          headers: {"Authorization": "Bearer ${this.jwt}"},
-        ),
-        data: {"course": sectionItem.fullCode, "section": sectionItem.crn});
+    final response = await this.api.postUri(
+      uri,
+      options: dioOptions.Options(
+        headers: {"Authorization": "Bearer ${this.jwt}"},
+      ),
+      data: {
+        "course": sectionItem.course,
+        "section": sectionItem.crn,
+      },
+    );
 
     if (response.statusCode != 200) {
       throw HttpException(response.statusCode.toString());
@@ -148,7 +163,36 @@ class AccountProvider extends ChangeNotifier {
     }
 
     sections!.add(sectionItem);
-    notifyListeners();
+    await this.updateLists();
+  }
+
+  Future<void> dropSection(SectionItem sectionItem) async {
+    Uri uri = Uri.http(Config.baseEndpoint!, "/api/v1/library/drop");
+
+    final response = await this.api.deleteUri(
+      uri,
+      options: dioOptions.Options(
+        headers: {"Authorization": "Bearer ${this.jwt}"},
+      ),
+      data: {
+        "course": sectionItem.course,
+        "section": sectionItem.crn,
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw HttpException(response.statusCode.toString());
+    }
+
+    Map<String, dynamic> data = response.data;
+
+    if (data['error'] != null || data["status"] != "success") {
+      log(data.toString());
+      throw ApiException(data['error']);
+    }
+
+    sections!.remove(sectionItem);
+    await this.updateLists();
   }
 
   Future<void> signOut() async {

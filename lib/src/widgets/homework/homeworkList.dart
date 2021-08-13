@@ -12,8 +12,9 @@ class HomeworkList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
+      padding: EdgeInsets.all(5.0),
       child: ListView.builder(
+        padding: EdgeInsets.all(0),
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
         itemCount: homework.length,

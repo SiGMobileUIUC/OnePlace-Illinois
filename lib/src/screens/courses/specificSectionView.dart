@@ -116,7 +116,32 @@ class _SectionViewState extends State<SectionView> {
                   Container(
                     padding: EdgeInsets.all(2.0),
                     child: Text(
+                      "Enrollment Status:",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            color: Colors.grey[500],
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(2.0),
+                    child: Text(
                       section.enrollmentStatus,
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            color: Colors.grey[500],
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(2.0),
+                    child: Text(
+                      "Building:",
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(
                             color: Colors.grey[500],
                             fontWeight: FontWeight.bold,
@@ -136,8 +161,18 @@ class _SectionViewState extends State<SectionView> {
                 ],
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(2.0),
+                    child: Text(
+                      "Lecture Type:",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            color: Colors.grey[500],
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
                   Container(
                     padding: EdgeInsets.all(2.0),
                     child: Text(
@@ -153,21 +188,28 @@ class _SectionViewState extends State<SectionView> {
                   ),
                 ],
               ),
-              Container(
-                padding: EdgeInsets.all(2.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Expanded(
-                      child: Text(
-                        section.instructors[0],
-                        style: Theme.of(context).textTheme.subtitle1!.copyWith(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(2.0),
+                    child: Text(
+                      "Instructors:",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
                             color: Colors.grey[500],
-                            fontWeight: FontWeight.bold),
-                      ),
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
-                  ],
-                ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(2.0),
+                    child: Text(
+                      section.instructors[0],
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                          color: Colors.grey[500], fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -178,17 +220,39 @@ class _SectionViewState extends State<SectionView> {
         indent: 25.0,
         thickness: 1.5,
       ),
-      HomeworkList(
-        homework: homework,
+      ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
+        isThreeLine: true,
+        title: Text(
+          "Homework:",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25.0,
+          ),
+        ),
+        subtitle: HomeworkList(
+          homework: homework,
+        ),
       ),
       Divider(
         endIndent: 25.0,
         indent: 25.0,
         thickness: 1.5,
       ),
-      LectureList(
-        lectureItems: lectureItems.toList(),
-        sectionItem: widget.sectionItem,
+      ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
+        isThreeLine: true,
+        title: Text(
+          "Lectures:",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25.0,
+          ),
+        ),
+        subtitle: LectureList(
+          lectureItems: lectureItems.toList(),
+          sectionItem: widget.sectionItem,
+        ),
       ),
       SizedBox(
         height: MediaQuery.of(context).size.height / 3,
@@ -197,10 +261,32 @@ class _SectionViewState extends State<SectionView> {
   }
 
   String _getTitle(String title) {
-    int index = title.indexOf(r"[0-9]");
+    int index = title.indexOf(RegExp(r"[0-9]"));
     String name = title.substring(0, index);
     String number = title.substring(index, title.length);
     return "$name $number";
+  }
+
+  Widget _addSectionButton(BuildContext context, AccountProvider account) {
+    if (!account.sections!
+        .map((e) => e.crn)
+        .toList()
+        .contains(widget.sectionItem.crn)) {
+      return IconButton(
+        onPressed: () async {
+          await account.addSection(widget.sectionItem);
+        },
+        icon: Icon(PlatformIcons(context).addCircledOutline),
+        tooltip: "Add course to library.",
+      );
+    }
+    return IconButton(
+      onPressed: () async {
+        await account.dropSection(widget.sectionItem);
+      },
+      icon: Icon(PlatformIcons(context).removeCircledOutline),
+      tooltip: "Remove course from library.",
+    );
   }
 
   @override
@@ -214,15 +300,7 @@ class _SectionViewState extends State<SectionView> {
         ),
         actions: [
           Consumer<AccountProvider>(builder: (context, account, child) {
-            return IconButton(
-              onPressed: () async {
-                if (!account.sections!.contains(widget.sectionItem)) {
-                  await account.addSectionItem(widget.sectionItem);
-                }
-              },
-              icon: Icon(PlatformIcons(context).addCircledOutline),
-              tooltip: "Add course to library.",
-            );
+            return _addSectionButton(context, account);
           }),
         ],
         leading: null,
