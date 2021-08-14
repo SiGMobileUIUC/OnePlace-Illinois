@@ -1,17 +1,10 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:http/http.dart';
-import 'package:oneplace_illinois/src/misc/config.dart';
 import 'package:oneplace_illinois/src/misc/enums.dart';
 import 'package:oneplace_illinois/src/models/courseItem.dart';
 import 'package:oneplace_illinois/src/models/homeworkItem.dart';
-import 'package:oneplace_illinois/src/models/sectionItem.dart';
 
 final course = CourseItem(
   year: 2021,
   semester: Semester.Fall,
-  semesterID: '25',
   subject: 'Math',
   subjectID: "math",
   courseID: 34535,
@@ -22,11 +15,10 @@ final course = CourseItem(
   classScheduleInformation: "DAILY",
   sections: [],
   categories: ['none'],
+  fullCode: "",
 );
 
 class HomeworkAPI {
-  Client client = Client();
-
   Future<HomeworkItem> getHomework(String homeworkCode) async {
     final homework = HomeworkItem(
       name: 'Homework 1',

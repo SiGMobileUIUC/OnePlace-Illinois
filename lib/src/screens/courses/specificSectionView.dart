@@ -1,107 +1,71 @@
 import 'dart:collection';
-import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/misc/enums.dart';
-import 'package:oneplace_illinois/src/models/courseItem.dart';
 import 'package:oneplace_illinois/src/models/file.dart';
 import 'package:oneplace_illinois/src/models/homeworkItem.dart';
 import 'package:oneplace_illinois/src/models/lectureItem.dart';
 import 'package:oneplace_illinois/src/models/sectionItem.dart';
-import 'package:oneplace_illinois/src/providers/homeworkApi.dart';
-import 'package:oneplace_illinois/src/services/courseApi.dart';
-import 'package:oneplace_illinois/src/widgets/alertBox.dart';
+import 'package:oneplace_illinois/src/providers/accountProvider.dart';
+import 'package:oneplace_illinois/src/services/homeworkApi.dart';
 import 'package:oneplace_illinois/src/widgets/homework/homeworkList.dart';
 import 'package:oneplace_illinois/src/widgets/lecture/lectureList.dart';
-import 'package:oneplace_illinois/src/widgets/inherited/apiWidget.dart';
 import 'package:oneplace_illinois/src/widgets/sliverView.dart';
+import 'package:provider/provider.dart';
 
 class SectionView extends StatefulWidget {
-  final CourseAPI _courseAPI = CourseAPI();
-  late final String? sectionName;
-  late final String? sectionCode;
-  late final SectionItem? section;
-  late final CourseItem? course;
-
-  SectionView(
-      {Key? key,
-      String? sectionName,
-      String? sectionCode,
-      SectionItem? section,
-      CourseItem? course})
-      : super(key: key) {
-    assert((section != null && course != null) ||
-        (sectionName != null && sectionCode != null));
-
-    this.sectionName = sectionName ?? '${course!.title} ${section!.sectionID}';
-    this.sectionCode = sectionCode;
-    this.section = section;
-    this.course = course;
-  }
+  final SectionItem sectionItem;
+  SectionView({
+    Key? key,
+    required this.sectionItem,
+  }) : super(key: key);
 
   @override
   _SectionViewState createState() => _SectionViewState();
 }
 
-final CourseItem course = CourseItem(
-  year: 2021,
-  semester: Semester.Fall,
-  semesterID: '25',
-  subject: 'Math',
-  subjectID: "math",
-  courseID: 34535,
-  title: 'Calculus I',
-  description: 'Calulus 1 for people',
-  creditHours: '4',
-  courseSectionInformation: 'Only X people',
-  classScheduleInformation: "DAILY",
-  sections: [],
-  categories: ['hi'],
-);
-
 class _SectionViewState extends State<SectionView> {
-  List<HomeworkItem>? homework;
-  HomeworkAPI homeworkApi = HomeworkAPI();
-  CourseAPI courseApi = CourseAPI();
-  late Future<SectionItem?> section;
-  late Future<CourseItem?> course;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    var api = ApiServiceWidget.of(context).api;
-
-    if (widget.sectionCode != null) {
-      var courseKeyword = widget.sectionCode!.split('_')[0];
-      courseKeyword =
-          '${courseKeyword.substring(0, 2)} ${courseKeyword.substring(2)}';
-      setState(() {
-        section = courseApi.getSection(api, widget.sectionCode!);
-        course = courseApi
-            .getCourses(api, courseKeyword)
-            .then((courses) => courses![0]);
-      });
-    } else {
-      setState(() {
-        section = Future.value(widget.section);
-        course = Future.value(widget.course);
-      });
-    }
-
-    course.then((course) async {
-      var homework = await homeworkApi.getHomework('code');
-
-      setState(() {
-        this.homework = [homework];
-      });
-    });
-  }
-
   List<Widget> _getDetails(SectionItem section) {
+    // Only here for now, to make things look seemless, will be removed and replaced witht he homework api
+    List<HomeworkItem> homework = [
+      HomeworkItem(
+        dueDate: DateTime.now().add(Duration(days: 2)),
+        name: 'Practice Problems #1',
+        description: 'This homework will help prepare you for the test!',
+        assignmentUrl: 'https://example.com',
+        platform: 'turnitin',
+        course: course,
+        files: [
+          File(
+            name: 'Problem set.json',
+            mimeType: 'application/json',
+            size: 400,
+            url: 'https://example.com',
+          ),
+          File(
+            name: 'Problem set.json',
+            mimeType: 'application/json',
+            size: 400,
+            url: 'https://example.com',
+          ),
+          File(
+            name: 'Problem set.json',
+            mimeType: 'application/json',
+            size: 400,
+            url: 'https://example.com',
+          )
+        ],
+      ),
+      HomeworkItem(
+        name: 'Practice Problems #2',
+        dueDate: DateTime.now().add(Duration(days: 7)),
+        assignmentUrl: 'https://en.wikipedia.org/wiki/Hot_air_ballooning',
+        platform: 'turnitin',
+        course: course,
+      )
+    ];
     LinkedList<LectureItem> lectureItems = LinkedList();
     lectureItems.addAll([
       LectureItem(
@@ -135,9 +99,8 @@ class _SectionViewState extends State<SectionView> {
         contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
         isThreeLine: true,
         title: Text(
-          section.sectionNumber,
+          section.sectionID,
           style: TextStyle(
-            // color: Colors.black,
             fontWeight: FontWeight.bold,
             fontSize: 25.0,
           ),
@@ -153,7 +116,32 @@ class _SectionViewState extends State<SectionView> {
                   Container(
                     padding: EdgeInsets.all(2.0),
                     child: Text(
+                      "Enrollment Status:",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            color: Colors.grey[500],
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(2.0),
+                    child: Text(
                       section.enrollmentStatus,
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            color: Colors.grey[500],
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(2.0),
+                    child: Text(
+                      "Building:",
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(
                             color: Colors.grey[500],
                             fontWeight: FontWeight.bold,
@@ -172,91 +160,99 @@ class _SectionViewState extends State<SectionView> {
                   ),
                 ],
               ),
-              section.sectionCappArea != null
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.all(2.0),
-                          child: Text(
-                            section.sectionCappArea ?? "",
-                            softWrap: false,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style:
-                                Theme.of(context).textTheme.subtitle1!.copyWith(
-                                      color: Colors.grey[500],
-                                      fontWeight: FontWeight.bold,
-                                    ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(2.0),
+                    child: Text(
+                      "Lecture Type:",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            color: Colors.grey[500],
+                            fontWeight: FontWeight.bold,
                           ),
-                        ),
-                      ],
-                    )
-                  : SizedBox(),
-              section.sectionNotes != null
-                  ? Container(
-                      padding: EdgeInsets.all(2.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Expanded(
-                            child: Text(
-                              section.sectionNotes ?? "",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .subtitle1!
-                                  .copyWith(
-                                      color: Colors.grey[500],
-                                      fontWeight: FontWeight.bold),
-                            ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(2.0),
+                    child: Text(
+                      section.type,
+                      softWrap: false,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            color: Colors.grey[500],
+                            fontWeight: FontWeight.bold,
                           ),
-                        ],
-                      ),
-                    )
-                  : SizedBox(),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(2.0),
+                    child: Text(
+                      "Instructors:",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            color: Colors.grey[500],
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(2.0),
+                    child: Text(
+                      section.instructors[0],
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                          color: Colors.grey[500], fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
       ),
       Divider(
-        // color: Colors.grey[500],
         endIndent: 25.0,
         indent: 25.0,
         thickness: 1.5,
       ),
-      homework == null
-          ? SpinKitRing(color: AppColors.secondaryUofILightest)
-          : HomeworkList(
-              homework: homework!,
-            ),
+      ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
+        isThreeLine: true,
+        title: Text(
+          "Homework:",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25.0,
+          ),
+        ),
+        subtitle: HomeworkList(
+          homework: homework,
+        ),
+      ),
       Divider(
-        // color: Colors.grey[500],
         endIndent: 25.0,
         indent: 25.0,
         thickness: 1.5,
       ),
-      FutureBuilder(
-        future: course,
-        initialData: null,
-        builder: (BuildContext context, AsyncSnapshot<CourseItem?> snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-            case ConnectionState.active:
-            case ConnectionState.none:
-              return SpinKitRing(color: AppColors.secondaryUofILightest);
-            case ConnectionState.done:
-              if (!snapshot.hasData) {
-                return AlertBox(
-                  child: Text(snapshot.error.toString()),
-                );
-              }
-
-              return LectureList(
-                lectureItems: lectureItems.toList(),
-                courseItem: snapshot.data!,
-              );
-          }
-        },
+      ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
+        isThreeLine: true,
+        title: Text(
+          "Lectures:",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25.0,
+          ),
+        ),
+        subtitle: LectureList(
+          lectureItems: lectureItems.toList(),
+          sectionItem: widget.sectionItem,
+        ),
       ),
       SizedBox(
         height: MediaQuery.of(context).size.height / 3,
@@ -264,51 +260,50 @@ class _SectionViewState extends State<SectionView> {
     ];
   }
 
+  String _getTitle(String title) {
+    int index = title.indexOf(RegExp(r"[0-9]"));
+    String name = title.substring(0, index);
+    String number = title.substring(index, title.length);
+    return "$name $number";
+  }
+
+  Widget _addSectionButton(BuildContext context, AccountProvider account) {
+    if (!account.sections!
+        .map((e) => e.crn)
+        .toList()
+        .contains(widget.sectionItem.crn)) {
+      return IconButton(
+        onPressed: () async {
+          await account.addSection(widget.sectionItem);
+        },
+        icon: Icon(PlatformIcons(context).addCircledOutline),
+        tooltip: "Add course to library.",
+      );
+    }
+    return IconButton(
+      onPressed: () async {
+        await account.dropSection(widget.sectionItem);
+      },
+      icon: Icon(PlatformIcons(context).removeCircledOutline),
+      tooltip: "Remove course from library.",
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return PlatformScaffold(
-      body: FutureBuilder(
-        future: Future.wait([section, course]),
-        initialData: null,
-        builder: (context, AsyncSnapshot<List<dynamic>?> snapshot) {
-          List<dynamic>? data;
-          if (snapshot.hasData) data = snapshot.data;
-
-          if (snapshot.connectionState == ConnectionState.waiting ||
-              data == null) {
-            return Center(
-              child: SpinKitRing(
-                color: AppColors.urbanaOrange,
-              ),
-            );
-          } else if (snapshot.hasError) {
-            final error = snapshot.error;
-            return Center(
-              child: AlertBox(
-                child: Text(error.toString()),
-              ),
-            );
-          } else {
-            final SectionItem section = data[0];
-            final CourseItem course = data[1];
-            return SliverView(
-              title: widget.sectionName ??
-                  '${course.subjectID}-${section.sectionID}',
-              children: _getDetails(section),
-              titleStyle: TextStyle(
-                color: Colors.white,
-              ),
-              actions: [
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(PlatformIcons(context).addCircledOutline),
-                  tooltip: "Add course to library.",
-                ),
-              ],
-              leading: null,
-            );
-          }
-        },
+      body: SliverView(
+        title: _getTitle(widget.sectionItem.course),
+        children: _getDetails(widget.sectionItem),
+        titleStyle: TextStyle(
+          color: Colors.white,
+        ),
+        actions: [
+          Consumer<AccountProvider>(builder: (context, account, child) {
+            return _addSectionButton(context, account);
+          }),
+        ],
+        leading: null,
       ),
     );
   }

@@ -1,5 +1,3 @@
-import 'package:http/http.dart';
-import 'package:oneplace_illinois/src/services/api.dart';
 import 'package:xml2json/xml2json.dart';
 
 class CourseExplorerApi {
