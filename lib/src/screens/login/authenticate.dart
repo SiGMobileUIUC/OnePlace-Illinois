@@ -4,7 +4,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
+import 'package:oneplace_illinois/src/providers/accountProvider.dart';
 import 'package:oneplace_illinois/src/services/firebaseAuth.dart';
+import 'package:provider/provider.dart';
 
 class Authenticate extends StatefulWidget {
   final bool register;
@@ -51,6 +53,7 @@ class _AuthenticateState extends State<Authenticate> {
 
   @override
   Widget build(BuildContext context) {
+    AccountProvider account = Provider.of<AccountProvider>(context);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -217,6 +220,7 @@ class _AuthenticateState extends State<Authenticate> {
                           });
                         }
                       }
+                      await account.init();
                     }
                   },
                   child: Text(

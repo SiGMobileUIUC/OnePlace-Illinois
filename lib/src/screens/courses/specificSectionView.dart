@@ -4,46 +4,31 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oneplace_illinois/src/misc/enums.dart';
-import 'package:oneplace_illinois/src/models/courseItem.dart';
 import 'package:oneplace_illinois/src/models/file.dart';
 import 'package:oneplace_illinois/src/models/homeworkItem.dart';
 import 'package:oneplace_illinois/src/models/lectureItem.dart';
 import 'package:oneplace_illinois/src/models/sectionItem.dart';
+import 'package:oneplace_illinois/src/providers/accountProvider.dart';
+import 'package:oneplace_illinois/src/services/homeworkApi.dart';
 import 'package:oneplace_illinois/src/widgets/homework/homeworkList.dart';
 import 'package:oneplace_illinois/src/widgets/lecture/lectureList.dart';
 import 'package:oneplace_illinois/src/widgets/sliverView.dart';
+import 'package:provider/provider.dart';
 
 class SectionView extends StatefulWidget {
   final SectionItem sectionItem;
-  final CourseItem courseItem;
-  const SectionView(
-      {Key? key, required this.sectionItem, required this.courseItem})
-      : super(key: key);
+  SectionView({
+    Key? key,
+    required this.sectionItem,
+  }) : super(key: key);
 
   @override
   _SectionViewState createState() => _SectionViewState();
 }
 
 class _SectionViewState extends State<SectionView> {
-  final CourseItem course = CourseItem(
-    year: 2021,
-    semester: Semester.Fall,
-    semesterID: "fa",
-    subject: 'Computer Science',
-    subjectID: "CS",
-    courseID: 0,
-    title: 'Introduction to Computer Science I',
-    description:
-        'Basic concepts in computing and fundamental techniques for solving computational problems. Intended as a first course for computer science majors and others with a deep interest in computing. Credit is not given for both CS 124 and CS 125. Prerequisite: Three years of high school mathematics or MATH 112.',
-    creditHours: '3 hours.',
-    courseSectionInformation:
-        'Credit is not given for both CS 124 and CS 125. Prerequisite: Three years of high school mathematics or MATH 112.',
-    classScheduleInformation: null,
-    sections: [],
-    categories: [],
-  );
-
-  List<Widget> _getDetails(SectionItem? section) {
+  List<Widget> _getDetails(SectionItem section) {
+    // Only here for now, to make things look seemless, will be removed and replaced witht he homework api
     List<HomeworkItem> homework = [
       HomeworkItem(
         dueDate: DateTime.now().add(Duration(days: 2)),
@@ -114,9 +99,8 @@ class _SectionViewState extends State<SectionView> {
         contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
         isThreeLine: true,
         title: Text(
-          section!.sectionNumber,
+          section.sectionID,
           style: TextStyle(
-            // color: Colors.black,
             fontWeight: FontWeight.bold,
             fontSize: 25.0,
           ),
@@ -132,7 +116,32 @@ class _SectionViewState extends State<SectionView> {
                   Container(
                     padding: EdgeInsets.all(2.0),
                     child: Text(
+                      "Enrollment Status:",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            color: Colors.grey[500],
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(2.0),
+                    child: Text(
                       section.enrollmentStatus,
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            color: Colors.grey[500],
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(2.0),
+                    child: Text(
+                      "Building:",
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(
                             color: Colors.grey[500],
                             fontWeight: FontWeight.bold,
@@ -151,70 +160,99 @@ class _SectionViewState extends State<SectionView> {
                   ),
                 ],
               ),
-              section.sectionCappArea != null
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.all(2.0),
-                          child: Text(
-                            section.sectionCappArea ?? "",
-                            softWrap: false,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style:
-                                Theme.of(context).textTheme.subtitle1!.copyWith(
-                                      color: Colors.grey[500],
-                                      fontWeight: FontWeight.bold,
-                                    ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(2.0),
+                    child: Text(
+                      "Lecture Type:",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            color: Colors.grey[500],
+                            fontWeight: FontWeight.bold,
                           ),
-                        ),
-                      ],
-                    )
-                  : SizedBox(),
-              section.sectionNotes != null
-                  ? Container(
-                      padding: EdgeInsets.all(2.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Expanded(
-                            child: Text(
-                              section.sectionNotes ?? "",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .subtitle1!
-                                  .copyWith(
-                                      color: Colors.grey[500],
-                                      fontWeight: FontWeight.bold),
-                            ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(2.0),
+                    child: Text(
+                      section.type,
+                      softWrap: false,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            color: Colors.grey[500],
+                            fontWeight: FontWeight.bold,
                           ),
-                        ],
-                      ),
-                    )
-                  : SizedBox(),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(2.0),
+                    child: Text(
+                      "Instructors:",
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            color: Colors.grey[500],
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(2.0),
+                    child: Text(
+                      section.instructors[0],
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                          color: Colors.grey[500], fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
       ),
       Divider(
-        // color: Colors.grey[500],
         endIndent: 25.0,
         indent: 25.0,
         thickness: 1.5,
       ),
-      HomeworkList(
-        homework: homework,
+      ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
+        isThreeLine: true,
+        title: Text(
+          "Homework:",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25.0,
+          ),
+        ),
+        subtitle: HomeworkList(
+          homework: homework,
+        ),
       ),
       Divider(
-        // color: Colors.grey[500],
         endIndent: 25.0,
         indent: 25.0,
         thickness: 1.5,
       ),
-      LectureList(
-        lectureItems: lectureItems.toList(),
-        courseItem: widget.courseItem,
+      ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
+        isThreeLine: true,
+        title: Text(
+          "Lectures:",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 25.0,
+          ),
+        ),
+        subtitle: LectureList(
+          lectureItems: lectureItems.toList(),
+          sectionItem: widget.sectionItem,
+        ),
       ),
       SizedBox(
         height: MediaQuery.of(context).size.height / 3,
@@ -222,21 +260,48 @@ class _SectionViewState extends State<SectionView> {
     ];
   }
 
+  String _getTitle(String title) {
+    int index = title.indexOf(RegExp(r"[0-9]"));
+    String name = title.substring(0, index);
+    String number = title.substring(index, title.length);
+    return "$name $number";
+  }
+
+  Widget _addSectionButton(BuildContext context, AccountProvider account) {
+    if (!account.sections!
+        .map((e) => e.crn)
+        .toList()
+        .contains(widget.sectionItem.crn)) {
+      return IconButton(
+        onPressed: () async {
+          await account.addSection(widget.sectionItem);
+        },
+        icon: Icon(PlatformIcons(context).addCircledOutline),
+        tooltip: "Add course to library.",
+      );
+    }
+    return IconButton(
+      onPressed: () async {
+        await account.dropSection(widget.sectionItem);
+      },
+      icon: Icon(PlatformIcons(context).removeCircledOutline),
+      tooltip: "Remove course from library.",
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return PlatformScaffold(
       body: SliverView(
-        title: "${widget.courseItem.subjectID} ${widget.courseItem.courseID}",
+        title: _getTitle(widget.sectionItem.course),
         children: _getDetails(widget.sectionItem),
         titleStyle: TextStyle(
           color: Colors.white,
         ),
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(PlatformIcons(context).addCircledOutline),
-            tooltip: "Add course to library.",
-          ),
+          Consumer<AccountProvider>(builder: (context, account, child) {
+            return _addSectionButton(context, account);
+          }),
         ],
         leading: null,
       ),

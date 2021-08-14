@@ -1,81 +1,138 @@
 class SectionItem {
-  /// ns2:section -> sectionNumber
-  String sectionNumber;
+  /// The current year for the section.
+  ///
+  /// Ex: 2021
+  int year;
 
-  /// ns2:section id
-  int sectionID;
+  /// The current term for the section.
+  ///
+  /// Ex: "fall"
+  String term;
 
-  /// ns2:section -> sectionCappArea
-  String? sectionCappArea;
+  /// The section CRN.
+  ///
+  /// Ex: 74477
+  int crn;
 
-  /// ns2:section -> partOfTerm
+  /// The course for the section.
+  ///
+  /// Ex: "CS124"
+  String course;
+
+  /// The section ID for the section.
+  ///
+  /// Ex: "AL1"
+  String sectionID;
+
+  /// The numerical term the section is in.
+  ///
+  /// Ex: "A"
   String partOfTerm;
 
-  /// ns2:section -> enrollmentStatus
+  /// Title of the section.
+  ///
+  /// Note: often an empty string.
+  String sectionTitle;
+
+  /// The status for the section.
+  ///
+  /// Should rarely be used, consider using [enrollmentStatus] instead.
+  String sectionStatus;
+
+  /// The credit hours for this section.
+  String creditHours;
+
+  /// The current enrollment status of the section; Open (Restricted).
+  ///
+  /// Ex: "Open"
   String enrollmentStatus;
 
-  String? sectionNotes;
-
-  /* /// ns2:section -> startDate
-  DateTime startDate;
-
-  /// ns2:section -> endDate
-  DateTime endDate; */
-
-  /// ns2:section -> meetings -> meeting -> instructors -> instructor
-  List<String> instructors;
-
+  /// The type of lectures the section will have.
+  ///
+  /// Ex: "Online Lecture"
   String type;
 
+  /// The code for [type].
+  ///
+  /// Ex: "OLC"
   String typeCode;
 
+  /// The start time for the section.
+  ///
+  /// Ex: "ARRANGED", "10:00 AM"
+  String startTime;
+
+  /// The end time for the section.
+  ///
+  /// Ex: "10:50 AM"
+  String endTime;
+
+  /// The days of the week that the section meets.
+  ///
+  /// Ex: "T"
+  ///
+  /// Note: This can often be an empty string.
   String daysOfWeek;
 
+  /// The room that the section meets in.
+  ///
+  /// Ex: "2310"
+  ///
+  /// Note: This can often be an empty string.
   String room;
 
+  /// The building that the section meets in.
+  ///
+  /// Ex: "Krannert Center for Perf Arts"
+  /// Note: This can often be an empty string.
   String building;
 
+  /// List of instructors teaching the section.
+  ///
+  /// Ex: "Challen, G;Lewis, C"
+  List<String> instructors;
+
   SectionItem({
-    required this.sectionNumber,
+    required this.year,
+    required this.term,
+    required this.crn,
     required this.sectionID,
-    required this.sectionCappArea,
     required this.partOfTerm,
+    required this.sectionTitle,
+    required this.sectionStatus,
+    required this.creditHours,
     required this.enrollmentStatus,
-    required this.sectionNotes,
-    // required this.startDate,
-    // required this.endDate,
-    required this.instructors,
     required this.type,
     required this.typeCode,
+    required this.startTime,
+    required this.endTime,
     required this.daysOfWeek,
     required this.room,
     required this.building,
+    required this.instructors,
+    required this.course,
   });
 
   factory SectionItem.fromJSON(Map<String, dynamic> json) {
-    /* List<Instructor?> _getInstructor(dynamic json) {
-      if (json is List) {
-        return json.toList().map((e) => Instructor.fromJSON(e)).toList();
-      } else {
-        return [];
-      }
-    } */
-
     dynamic courseSection = SectionItem(
-      sectionNumber: json["code"],
-      sectionID: json["CRN"],
-      sectionCappArea: json["sectionCappArea"] ?? null,
-      partOfTerm: json["part_of_term"],
-      enrollmentStatus: json["enrollment_status"],
-      sectionNotes: json["sectionNotes"] ?? null,
-      // startDate: DateTime.parse(json["start_date"]),
-      // endDate: DateTime.parse(json["end_date"]),
-      instructors: [json["instructors"]],
+      course: json["course"] ?? "",
+      crn: json["CRN"],
+      sectionID: json["code"],
+      partOfTerm: json["partOfTerm"],
+      enrollmentStatus: json["enrollmentStatus"],
+      instructors: json["instructors"].split(";"),
       type: json["type"],
-      typeCode: json["type_code"],
-      daysOfWeek: json["days_of_week"],
+      typeCode: json["typeCode"],
+      daysOfWeek: json["daysOfWeek"],
       room: json["room"],
       building: json["building"],
+      creditHours: json["sectionCreditHours"],
+      endTime: json["endTime"],
+      sectionStatus: json["sectionStatus"],
+      sectionTitle: json["sectionTitle"],
+      startTime: json["startTime"],
+      term: json["term"],
+      year: json["year"],
     );
     return courseSection;
   }

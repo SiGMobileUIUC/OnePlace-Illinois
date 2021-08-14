@@ -11,8 +11,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/misc/enums.dart';
+import 'package:oneplace_illinois/src/models/sectionItem.dart';
 import 'package:oneplace_illinois/src/providers/mediSpaceFileProvider.dart';
-import 'package:oneplace_illinois/src/models/courseItem.dart';
 import 'package:oneplace_illinois/src/models/lectureItem.dart';
 import 'package:oneplace_illinois/src/providers/mediaSpaceDownloadProvider.dart';
 import 'package:oneplace_illinois/src/providers/mediaSpaceDownload.dart';
@@ -21,13 +21,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 class LecturePage extends StatefulWidget {
-  final CourseItem courseItem;
+  final SectionItem sectionItem;
   final LectureItem lectureItem;
   final bool downloaded;
   final String path;
   const LecturePage({
     Key? key,
-    required this.courseItem,
+    required this.sectionItem,
     required this.lectureItem,
     required this.downloaded,
     required this.path,
@@ -152,11 +152,18 @@ class _LecturePageState extends State<LecturePage> with WidgetsBindingObserver {
     }
   }
 
+  String _getTitle(String title) {
+    int index = title.indexOf(r"[0-9]");
+    String name = title.substring(0, index);
+    String number = title.substring(index, title.length);
+    return "$name $number";
+  }
+
   @override
   Widget build(BuildContext context) {
     return PlatformScaffold(
       body: SliverView(
-        title: "${widget.courseItem.subjectID} ${widget.courseItem.courseID}",
+        title: _getTitle(widget.sectionItem.course),
         children: _buildPage(context),
         actions: [],
         leading: null,
@@ -273,7 +280,7 @@ class _LecturePageState extends State<LecturePage> with WidgetsBindingObserver {
                                       return LecturePage(
                                         lectureItem:
                                             widget.lectureItem.previous!,
-                                        courseItem: widget.courseItem,
+                                        sectionItem: widget.sectionItem,
                                         downloaded: true,
                                         path: path,
                                       );
@@ -289,7 +296,7 @@ class _LecturePageState extends State<LecturePage> with WidgetsBindingObserver {
                                 builder: (context) {
                                   return LecturePage(
                                     lectureItem: widget.lectureItem.previous!,
-                                    courseItem: widget.courseItem,
+                                    sectionItem: widget.sectionItem,
                                     downloaded: false,
                                     path: "",
                                   );
@@ -323,7 +330,7 @@ class _LecturePageState extends State<LecturePage> with WidgetsBindingObserver {
                                     builder: (context) {
                                       return LecturePage(
                                         lectureItem: widget.lectureItem.next!,
-                                        courseItem: widget.courseItem,
+                                        sectionItem: widget.sectionItem,
                                         downloaded: true,
                                         path: path,
                                       );
@@ -339,7 +346,7 @@ class _LecturePageState extends State<LecturePage> with WidgetsBindingObserver {
                                 builder: (context) {
                                   return LecturePage(
                                     lectureItem: widget.lectureItem.next!,
-                                    courseItem: widget.courseItem,
+                                    sectionItem: widget.sectionItem,
                                     downloaded: false,
                                     path: "",
                                   );

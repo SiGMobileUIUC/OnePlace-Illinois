@@ -2,49 +2,74 @@ import 'package:oneplace_illinois/src/misc/enums.dart';
 import 'package:oneplace_illinois/src/models/sectionItem.dart';
 
 class CourseItem implements Comparable {
-  /// ns2:course -> parents -> calendarYear id
+  /// The current year for the course.
+  ///
+  /// Ex: 2021
   int year;
 
-  /// ns2:course -> parents -> term
+  /// The semester for this course.
+  ///
+  /// Ex: "fall"
   Semester semester;
 
-  /// ns2:course -> parents -> term id
-  String semesterID;
-
-  /// ns2:course -> parents -> subject
+  /// The subject this course is a part of.
+  ///
+  /// Ex: "Computer Science"
   String subject;
 
-  /// ns2:course -> parents -> subject id
+  /// Shortened ID for the subject.
+  ///
+  /// Ex: "CS"
   String subjectID;
 
-  /// ns2:course -> id
+  /// The number for this course.
+  ///
+  /// Ex: 124
   int courseID;
 
-  /// ns2:course -> label
+  /// The title/name of the course.
+  ///
+  /// Ex: "Introduction to Computer Science I"
   String title;
 
-  /// ns2:course -> description
+  /// The description about the course
+  ///
+  /// Ex: "Basic concepts in computing and fundamental techniques for solving computational problems. Intended as a first course for computer science majors and others with a deep interest in computing. Credit is not given for both CS 124 and CS 125. Prerequisite: Three years of high school mathematics or MATH 112."
   String description;
 
-  /// ns2:course -> creditHours
+  /// The credit hours for the course.
+  ///
+  /// Ex: "3 hours."
   String creditHours;
 
-  /// ns2:course -> courseSectionInformation
+  /// Any information about the course sections.
+  ///
+  /// Ex: "Credit is not given for both CS 124 and CS 125. Prerequisite: Three years of high school mathematics or MATH 112."
   String? courseSectionInformation;
 
-  /// ns2:course -> classScheduleInformation
+  /// Any information about the course schedule.
+  ///
+  /// Ex: "Open only to students who have passed a qualifying audition. Non-music majors will be assessed a fee."
   String? classScheduleInformation;
 
-  /// ns2:course -> sections
+  /// List of sections for this course.
+  ///
+  /// Note: It can sometimes be an empty list if the API does not return the sections.
   List<SectionItem> sections;
 
-  /// ns2:course -> genEdCategories -> category -> description
+  /// List of general education categories for this course.
+  ///
+  /// Note: It can sometimes be an empty list if there are no general education categories.
   List<String> categories;
+
+  /// The [subjectID] and [courseID] combined together.
+  ///
+  /// Ex: "CS124"
+  String fullCode;
 
   CourseItem({
     required this.year,
     required this.semester,
-    required this.semesterID,
     required this.subject,
     required this.subjectID,
     required this.courseID,
@@ -55,32 +80,17 @@ class CourseItem implements Comparable {
     required this.classScheduleInformation,
     required this.sections,
     required this.categories,
+    required this.fullCode,
   });
 
   factory CourseItem.fromJSON(Map<String, dynamic> json, bool onlyCourses) {
     Semesters _sem = Semesters();
-    /* List<String> _getSectionsLinks(dynamic sections) {
-      if (sections is List) {
-        return sections.map((e) => e["href"].toString()).toList();
-      } else {
-        return [sections["href"].toString()];
-      }
-    }
 
-    List<String> _getCategories(dynamic json) {
-      if (json is List) {
-        return json
-            .map((e) =>
-                e["ns2\$genEdAttributes"]["genEdAttribute"]["\$t"].toString())
-            .toList();
-      } else {
-        return [
-          json["ns2\$genEdAttributes"]["genEdAttribute"]["\$t"].toString()
-        ];
+    List<SectionItem> _getSections(json) {
+      List<dynamic> list = json["sections"] ?? [];
+      if (list == []) {
+        return [];
       }
-    } */
-
-    List<SectionItem> _getSections(List<dynamic> list) {
       List<SectionItem> sections =
           list.map((e) => SectionItem.fromJSON(e)).toList();
       return sections;
@@ -89,7 +99,6 @@ class CourseItem implements Comparable {
     dynamic course = CourseItem(
       year: json["year"],
       semester: _sem.fromString(json["semester"]),
-      semesterID: json["semesterID"],
       subject: json["subject"],
       subjectID: json["subjectId"],
       courseID: json["courseId"],
@@ -98,8 +107,9 @@ class CourseItem implements Comparable {
       creditHours: json["creditHours"],
       courseSectionInformation: json["courseSectionInformation"] ?? null,
       classScheduleInformation: json["classScheduleInformation"] ?? null,
-      sections: _getSections(json["sections"]),
-      categories: [json["genEd"]],
+      sections: _getSections(json),
+      categories: List<String>.from(json["genEd"]),
+      fullCode: json["fullCode"] ?? "${json['subjectId']}${json['courseId']}",
     );
     return course;
   }
@@ -108,8 +118,10 @@ class CourseItem implements Comparable {
   int compareTo(dynamic list) {
     String query = list[0];
     CourseItem other = list[1];
-    if (this.subjectID.toLowerCase() == query.trimLeft().split(" ")[0] &&
-        other.subjectID.toLowerCase() == query.trimLeft().split(" ")[0]) {
+    if (this.subjectID.toLowerCase() ==
+            query.trimLeft().split(" ")[0].toLowerCase() &&
+        other.subjectID.toLowerCase() ==
+            query.trimLeft().split(" ")[0].toLowerCase()) {
       if (this.courseID < other.courseID) {
         return -1;
       }
@@ -121,13 +133,17 @@ class CourseItem implements Comparable {
       }
     }
 
-    if (this.subjectID.toLowerCase() == query.trimLeft().split(" ")[0] &&
-        other.subjectID.toLowerCase() != query.trimLeft().split(" ")[0]) {
+    if (this.subjectID.toLowerCase() ==
+            query.trimLeft().split(" ")[0].toLowerCase() &&
+        other.subjectID.toLowerCase() !=
+            query.trimLeft().split(" ")[0].toLowerCase()) {
       return -1;
     }
 
-    if (this.subjectID.toLowerCase() != query.trimLeft().split(" ")[0] &&
-        other.subjectID.toLowerCase() == query.trimLeft().split(" ")[0]) {
+    if (this.subjectID.toLowerCase() !=
+            query.trimLeft().split(" ")[0].toLowerCase() &&
+        other.subjectID.toLowerCase() ==
+            query.trimLeft().split(" ")[0].toLowerCase()) {
       return 1;
     }
 

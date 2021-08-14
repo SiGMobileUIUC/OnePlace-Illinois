@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
+import 'package:oneplace_illinois/src/providers/accountProvider.dart';
 import 'package:oneplace_illinois/src/providers/mediSpaceFileProvider.dart';
 import 'package:oneplace_illinois/src/providers/mediaSpaceDownloadProvider.dart';
 import 'package:oneplace_illinois/src/screens/home/addItemTab.dart';
@@ -29,11 +30,6 @@ class OnePlace extends StatefulWidget {
 
 class _OnePlaceState extends State<OnePlace> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final darkTheme = CupertinoThemeData(
       brightness: Brightness.dark,
@@ -48,11 +44,6 @@ class _OnePlaceState extends State<OnePlace> {
       primaryColor: AppColors.secondaryUofILightest,
     );
 
-    // Future proofing; If we ever need to access a class or object that is not a part of the current class or screen, we can by initializing a provider here.
-    /* return MultiProvider(
-      providers: [
-      ],
-      child: */
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<MSDownload>(
@@ -63,6 +54,13 @@ class _OnePlaceState extends State<OnePlace> {
         ),
         ChangeNotifierProvider<MSVideoFileProvider>(
           create: (context) => MSVideoFileProvider(),
+        ),
+        ChangeNotifierProvider<AccountProvider>(
+          create: (context) {
+            AccountProvider accountProvider = AccountProvider();
+            accountProvider.init();
+            return accountProvider;
+          },
         ),
       ],
       child: PlatformProvider(
@@ -121,7 +119,6 @@ class _OnePlaceState extends State<OnePlace> {
         ),
       ),
     );
-    // );
   }
 }
 

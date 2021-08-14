@@ -26,7 +26,7 @@ class AlertBox extends StatelessWidget {
                       color: iconColor ?? Colors.redAccent,
                     ),
                   ),
-                  child,
+                  Expanded(child: child),
                 ],
               ),
             ),

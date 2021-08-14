@@ -1,16 +1,9 @@
 # oneplace_illinois
 
-A new Flutter project.
+The only app you need to manage your course work at U of I.
 
-## Getting Started
+## Development
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Connecting to a local instance of the API
+#### Android Emulator
+To connect to the API locally, you'll need to modify the API's base endpoint in your .env file. Use `10.0.2.2:<port>` as host, filling in `<port>` with the port you're running the API from. The IP `10.0.2.2` routes from the Android VM to `localhost`.

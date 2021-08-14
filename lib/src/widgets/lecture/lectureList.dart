@@ -8,8 +8,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:oneplace_illinois/src/misc/colors.dart';
 import 'package:oneplace_illinois/src/misc/enums.dart';
+import 'package:oneplace_illinois/src/models/sectionItem.dart';
 import 'package:oneplace_illinois/src/providers/mediSpaceFileProvider.dart';
-import 'package:oneplace_illinois/src/models/courseItem.dart';
 import 'package:oneplace_illinois/src/models/lectureItem.dart';
 import 'package:oneplace_illinois/src/providers/mediaSpaceDownloadProvider.dart';
 import 'package:oneplace_illinois/src/screens/lectures/lecturePage.dart';
@@ -20,12 +20,12 @@ import 'package:transparent_image/transparent_image.dart';
 
 class LectureList extends StatefulWidget {
   final List<LectureItem> lectureItems;
-  final CourseItem courseItem;
+  final SectionItem sectionItem;
 
   LectureList({
     Key? key,
     required this.lectureItems,
-    required this.courseItem,
+    required this.sectionItem,
   }) : super(key: key);
 
   @override
@@ -43,123 +43,128 @@ class _LectureListState extends State<LectureList> {
     final MSVideoFileProvider videoFile =
         Provider.of<MSVideoFileProvider>(context);
     final MSDownload ffmpeg = Provider.of<MSDownload>(context, listen: false);
-    return ListView.builder(
-      itemCount: widget.lectureItems.length,
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () async {
-            if (videoFile.status!.isGranted || videoFile.status!.isLimited) {
-              String path =
-                  "${videoFile.externalDir!.path}/${widget.lectureItems[index].videoID}.mp4";
-              if (await videoFile.checkFile(widget.lectureItems[index]) &&
-                  !ffmpeg.encoding) {
-                Navigator.of(context, rootNavigator: true).push(
-                  CupertinoPageRoute(
-                    builder: (context) {
-                      return LecturePage(
-                        lectureItem: widget.lectureItems[index],
-                        courseItem: widget.courseItem,
-                        downloaded: true,
-                        path: path,
-                      );
-                    },
-                  ),
-                );
-                return;
-              }
-            }
-            Navigator.of(context, rootNavigator: true).push(
-              CupertinoPageRoute(
-                builder: (context) {
-                  return LecturePage(
-                    lectureItem: widget.lectureItems[index],
-                    courseItem: widget.courseItem,
-                    downloaded: false,
-                    path: "",
+    return Container(
+      padding: EdgeInsets.all(5.0),
+      child: ListView.builder(
+        padding: EdgeInsets.all(0),
+        itemCount: widget.lectureItems.length,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () async {
+              if (videoFile.status!.isGranted || videoFile.status!.isLimited) {
+                String path =
+                    "${videoFile.externalDir!.path}/${widget.lectureItems[index].videoID}.mp4";
+                if (await videoFile.checkFile(widget.lectureItems[index]) &&
+                    !ffmpeg.encoding) {
+                  Navigator.of(context, rootNavigator: true).push(
+                    CupertinoPageRoute(
+                      builder: (context) {
+                        return LecturePage(
+                          lectureItem: widget.lectureItems[index],
+                          sectionItem: widget.sectionItem,
+                          downloaded: true,
+                          path: path,
+                        );
+                      },
+                    ),
                   );
-                },
+                  return;
+                }
+              }
+              Navigator.of(context, rootNavigator: true).push(
+                CupertinoPageRoute(
+                  builder: (context) {
+                    return LecturePage(
+                      lectureItem: widget.lectureItems[index],
+                      sectionItem: widget.sectionItem,
+                      downloaded: false,
+                      path: "",
+                    );
+                  },
+                ),
+              );
+            },
+            child: Card(
+              color:
+                  MediaQuery.of(context).platformBrightness == Brightness.dark
+                      ? Colors.grey[900]
+                      : Colors.grey[300],
+              child: Container(
+                margin: EdgeInsets.only(
+                  left: 12.0,
+                  right: 12.0,
+                  top: 6.0,
+                  bottom: 6.0,
+                ),
+                height: 100,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Hero(
+                        tag: widget.lectureItems[index].lectureUrl,
+                        child: AspectRatio(
+                          aspectRatio: 16 / 9,
+                          child: Container(
+                            color: Colors.black,
+                            child: FadeInImage.memoryNetwork(
+                              fadeInCurve: Curves.easeOut,
+                              fadeInDuration: Duration(milliseconds: 300),
+                              image: widget.lectureItems[index].thumbnail,
+                              placeholder: kTransparentImage,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          left: 12.0,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                                "Lecture ${widget.lectureItems[index].lectureNumber}"),
+                            Text(
+                              widget.lectureItems[index].title,
+                              style: Theme.of(context).textTheme.caption,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              widget.lectureItems[index].author,
+                              style: Theme.of(context).textTheme.caption,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              "${DateFormat.MEd().format(widget.lectureItems[index].created)}",
+                              style: Theme.of(context).textTheme.caption,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    /* Container(
+                      padding: EdgeInsets.only(left: 10.0),
+                      child: _downloadButton(index),
+                    ), */
+                  ],
+                ),
               ),
-            );
-          },
-          child: Card(
-            color: MediaQuery.of(context).platformBrightness == Brightness.dark
-                ? Colors.grey[900]
-                : Colors.grey[300],
-            child: Container(
               margin: EdgeInsets.only(
                 left: 12.0,
                 right: 12.0,
                 top: 6.0,
                 bottom: 6.0,
               ),
-              height: 100,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Hero(
-                      tag: widget.lectureItems[index].lectureUrl,
-                      child: AspectRatio(
-                        aspectRatio: 16 / 9,
-                        child: Container(
-                          color: Colors.black,
-                          child: FadeInImage.memoryNetwork(
-                            fadeInCurve: Curves.easeOut,
-                            fadeInDuration: Duration(milliseconds: 300),
-                            image: widget.lectureItems[index].thumbnail,
-                            placeholder: kTransparentImage,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      margin: EdgeInsets.only(
-                        left: 12.0,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                              "Lecture ${widget.lectureItems[index].lectureNumber}"),
-                          Text(
-                            widget.lectureItems[index].title,
-                            style: Theme.of(context).textTheme.caption,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Text(
-                            widget.lectureItems[index].author,
-                            style: Theme.of(context).textTheme.caption,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Text(
-                            "${DateFormat.MEd().format(widget.lectureItems[index].created)}",
-                            style: Theme.of(context).textTheme.caption,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  /* Container(
-                    padding: EdgeInsets.only(left: 10.0),
-                    child: _downloadButton(index),
-                  ), */
-                ],
-              ),
             ),
-            margin: EdgeInsets.only(
-              left: 12.0,
-              right: 12.0,
-              top: 6.0,
-              bottom: 6.0,
-            ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 

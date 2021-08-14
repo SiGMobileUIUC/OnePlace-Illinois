@@ -13,11 +13,9 @@ import 'package:oneplace_illinois/src/widgets/alertBox.dart';
 class Search extends SearchDelegate<CourseItem> {
   List<CourseItem>? _courses = [];
   final CourseAPI _courseAPI = CourseAPI();
-  // final CourseExplorerApi _courseExplorerApi = CourseExplorerApi();
   final CourseItem emptyCourseItem = CourseItem(
     year: 0,
     semester: Semester.Fall,
-    semesterID: "0",
     subject: "",
     subjectID: "",
     courseID: 0,
@@ -28,6 +26,7 @@ class Search extends SearchDelegate<CourseItem> {
     classScheduleInformation: "",
     sections: [],
     categories: [""],
+    fullCode: "",
   );
 
   @override
@@ -75,13 +74,8 @@ class Search extends SearchDelegate<CourseItem> {
   }
 
   _getCourses() {
-    return _courseAPI.getCourses(query, false);
+    return _courseAPI.getCourses(query, onlyCourses: false);
   }
-
-  /* Future<CourseItem?> _getCourse(CourseListItem courseListItem) async {
-    CourseItem? course = await _courseExplorerApi.getCourse(courseListItem);
-    return course;
-  } */
 
   @override
   Widget buildResults(BuildContext context) {
@@ -107,7 +101,8 @@ class Search extends SearchDelegate<CourseItem> {
                       ? AlertBox(
                           child: Text(
                             'No Search results found for $query',
-                            style: TextStyle(color: Colors.white),
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 15.0),
                           ),
                         )
                       : Container();
